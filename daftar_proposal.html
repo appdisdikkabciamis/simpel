@@ -891,7 +891,7 @@
 
             // Create toast element
             const toast = document.createElement('div');
-            toast.className = `min - w - [320px] max - w - md w - full bg - white dark: bg - [#1a2634] shadow - 2xl rounded - xl pointer - events - auto flex ring - 1 ring - black ring - opacity - 5 transform transition - all duration - 300 translate - x - full opacity - 0 overflow - hidden border - l - 4 ${type === 'success' ? 'border-green-500' : type === 'error' ? 'border-red-500' : 'border-blue-500'} `;
+            toast.className = `min-w-[320px] max-w-md w-full bg-white dark:bg-[#1a2634] shadow-2xl rounded-xl pointer-events-auto flex ring-1 ring-black ring-opacity-5 transform transition-all duration-300 translate-x-full opacity-0 overflow-hidden border-l-4 ${type === 'success' ? 'border-green-500' : type === 'error' ? 'border-red-500' : 'border-blue-500'}`;
 
             // Icon
             let iconColor = 'text-blue-500';
@@ -906,7 +906,7 @@
             }
 
             toast.innerHTML = `
-                    < div class="p-4 flex items-start w-full" >
+                <div class="p-4 flex items-start w-full">
                     <div class="flex-shrink-0">
                       <span class="material-symbols-outlined ${iconColor} text-[24px]">${iconName}</span>
                     </div>
@@ -919,8 +919,8 @@
                         <span class="material-symbols-outlined text-[18px]">close</span>
                       </button>
                     </div>
-                </div >
-                    `;
+                </div>
+            `;
 
             container.appendChild(toast);
 
@@ -943,10 +943,10 @@
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
 
-            toast.className = `min - w - [320px] max - w - md w - full bg - white dark: bg - [#1a2634] shadow - 2xl rounded - xl pointer - events - auto flex flex - col ring - 1 ring - black ring - opacity - 5 transform transition - all duration - 300 translate - x - full opacity - 0 overflow - hidden border - l - 4 border - yellow - 500`;
+            toast.className = `min-w-[320px] max-w-md w-full bg-white dark:bg-[#1a2634] shadow-2xl rounded-xl pointer-events-auto flex flex-col ring-1 ring-black ring-opacity-5 transform transition-all duration-300 translate-x-full opacity-0 overflow-hidden border-l-4 border-yellow-500`;
 
             toast.innerHTML = `
-                    < div class="p-4 flex items-start w-full" >
+                <div class="p-4 flex items-start w-full">
                     <div class="flex-shrink-0">
                       <span class="material-symbols-outlined text-yellow-500 text-[24px]">warning</span>
                     </div>
@@ -961,7 +961,7 @@
                         </button>
                       </div>
                     </div>
-                </div >
+                </div>
             `;
 
             container.appendChild(toast);
