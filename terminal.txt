@@ -1,0 +1,7 @@
+git init
+git remote add origin https://github.com/appdisdikkabciamis/simpel.git
+
+
+git add .           
+git commit -m "update konten"
+git push -u origin main --force

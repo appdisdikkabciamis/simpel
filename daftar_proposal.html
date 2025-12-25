@@ -134,18 +134,82 @@
                         <span>entri</span>
                     </div>
 
-                    <!-- Search Input Moved Here -->
-                    <div class="relative w-full md:w-auto">
-                        <span
-                            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-[20px]">search</span>
-                        <input type="text" id="searchInput" placeholder="Cari proposal..."
-                            class="pl-10 pr-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm focus:ring-primary focus:border-primary transition-all w-full md:w-64">
+                    <div class="flex items-center gap-2 w-full md:w-auto">
+                        <!-- Column Visibility Toggle -->
+                        <div class="relative">
+                            <button onclick="document.getElementById('columnMenu').classList.toggle('hidden')"
+                                class="flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-[#637588] dark:text-[#94a3b8] px-3 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
+                                <span class="material-symbols-outlined text-[20px]">view_column</span>
+                                <span class="hidden sm:inline">Kolom</span>
+                            </button>
+                            <!-- Dropdown Menu -->
+                            <div id="columnMenu"
+                                class="hidden absolute right-0 mt-2 w-56 bg-white dark:bg-[#1a2634] rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 z-50 p-2 space-y-1">
+                                <label
+                                    class="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg cursor-pointer">
+                                    <input type="checkbox" checked onclick="toggleColumn(0)"
+                                        class="rounded border-gray-300 text-primary focus:ring-primary">
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">No</span>
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg cursor-pointer">
+                                    <input type="checkbox" checked onclick="toggleColumn(1)"
+                                        class="rounded border-gray-300 text-primary focus:ring-primary">
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">Judul Proposal</span>
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg cursor-pointer">
+                                    <input type="checkbox" checked onclick="toggleColumn(2)"
+                                        class="rounded border-gray-300 text-primary focus:ring-primary">
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">NPSN</span>
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg cursor-pointer">
+                                    <input type="checkbox" checked onclick="toggleColumn(3)"
+                                        class="rounded border-gray-300 text-primary focus:ring-primary">
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">Nama Sekolah</span>
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg cursor-pointer">
+                                    <input type="checkbox" checked onclick="toggleColumn(4)"
+                                        class="rounded border-gray-300 text-primary focus:ring-primary">
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">Kecamatan</span>
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg cursor-pointer">
+                                    <input type="checkbox" onclick="toggleColumn(5)"
+                                        class="rounded border-gray-300 text-primary focus:ring-primary">
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">Tanggal Proposal</span>
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg cursor-pointer">
+                                    <input type="checkbox" onclick="toggleColumn(6)"
+                                        class="rounded border-gray-300 text-primary focus:ring-primary">
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">Tanggal Diterima</span>
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg cursor-pointer">
+                                    <input type="checkbox" checked onclick="toggleColumn(7)"
+                                        class="rounded border-gray-300 text-primary focus:ring-primary">
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">Aksi</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Search Input -->
+                        <div class="relative flex-1">
+                            <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-[20px]">search</span>
+                            <input type="text" id="searchInput" placeholder="Cari..."
+                                class="pl-10 pr-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm focus:ring-primary focus:border-primary transition-all w-full">
+                        </div>
                     </div>
                 </div>
 
-                <!-- Table Wrapper (Scrollable on mobile) -->
-                <div class="overflow-x-auto rounded-lg border border-[#e5e7eb] dark:border-[#2a3848]">
-                    <table class="w-full text-left text-sm relative border-collapse min-w-[1000px]">
+                <!-- Table Wrapper -->
+                <div
+                    class="overflow-x-auto md:overflow-visible rounded-lg border border-[#e5e7eb] dark:border-[#2a3848]">
+                    <table class="w-full text-left text-sm relative border-collapse" id="proposalTable">
                         <thead
                             class="sticky top-0 z-10 bg-[#f8fafc] dark:bg-[#0f172a] text-[#637588] dark:text-[#94a3b8] shadow-sm outline outline-1 outline-[#e5e7eb] dark:outline-[#2a3848]">
                             <tr>
@@ -154,8 +218,8 @@
                                 <th class="px-5 py-3 font-medium">NPSN</th>
                                 <th class="px-5 py-3 font-medium">Nama Sekolah</th>
                                 <th class="px-5 py-3 font-medium">Kecamatan</th>
-                                <th class="px-5 py-3 font-medium">Tanggal Proposal</th>
-                                <th class="px-5 py-3 font-medium">Tanggal Diterima</th>
+                                <th class="px-5 py-3 font-medium hidden">Tanggal Proposal</th>
+                                <th class="px-5 py-3 font-medium hidden">Tanggal Diterima</th>
                                 <th class="px-5 py-3 font-medium text-right">Aksi</th>
                             </tr>
                         </thead>
@@ -255,6 +319,9 @@
     <div id="toast-container" class="fixed top-5 right-5 z-[100] flex flex-col gap-3 pointer-events-none"></div>
 
     <script>
+        // Global state to persist column visibility across renders
+        // Indices: 0=No, 1=Judul, 2=NPSN, 3=Nama, 4=Kecamatan, 5=TglProp, 6=TglRec, 7=Aksi
+        window.columnVisibility = [true, true, true, true, true, false, false, true];
         const API_URL = "https://script.google.com/macros/s/AKfycbzxvd3NXMiJOT9TYoyGB8lvHIY4h64ABVGVvL-lAq_zegrZ3-vry4YLplYjDUSIf9SiDQ/exec";
         let allRows = []; // Store all data locally for search
         let filteredRows = []; // Data currently being displayed after search/filter
@@ -594,19 +661,22 @@
 
                 const rowNum = startIndex + index + 1;
 
+                // Helper to get visibility class
+                const getHiddenClass = (idx) => window.columnVisibility && !window.columnVisibility[idx] ? 'hidden' : '';
+
                 tr.innerHTML = `
-                    <td class="px-5 py-4 text-[#637588] dark:text-[#94a3b8]">${rowNum}</td>
-                    <td class="px-5 py-4 font-medium text-gray-900 dark:text-white">${r[6] || '-'}</td>
-                    <td class="px-5 py-4 text-[#637588] dark:text-[#94a3b8]">${r[3] || '-'}</td>
-                    <td class="px-5 py-4 text-[#637588] dark:text-[#94a3b8]">${r[4] || '-'}</td>
-                    <td class="px-5 py-4">
+                    <td class="px-5 py-4 text-[#637588] dark:text-[#94a3b8] ${getHiddenClass(0)}">${rowNum}</td>
+                    <td class="px-5 py-4 font-medium text-gray-900 dark:text-white ${getHiddenClass(1)}">${r[6] || '-'}</td>
+                    <td class="px-5 py-4 text-[#637588] dark:text-[#94a3b8] ${getHiddenClass(2)}">${r[3] || '-'}</td>
+                    <td class="px-5 py-4 text-[#637588] dark:text-[#94a3b8] ${getHiddenClass(3)}">${r[4] || '-'}</td>
+                    <td class="px-5 py-4 ${getHiddenClass(4)}">
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
                             ${r[5] || '-'}
                         </span>
                     </td>
-                    <td class="px-5 py-4 text-[#637588] dark:text-[#94a3b8]">${dateProposalStr}</td>
-                    <td class="px-5 py-4 text-[#637588] dark:text-[#94a3b8]">${dateReceivedStr}</td>
-                    <td class="px-5 py-4 text-right">
+                    <td class="px-5 py-4 text-[#637588] dark:text-[#94a3b8] ${getHiddenClass(5)}">${dateProposalStr}</td>
+                    <td class="px-5 py-4 text-[#637588] dark:text-[#94a3b8] ${getHiddenClass(6)}">${dateReceivedStr}</td>
+                    <td class="px-5 py-4 text-right ${getHiddenClass(7)}">
                          <div class="flex items-center justify-end gap-2">
                             <button onclick="openEditModal('${rowData}')" title="Edit" class="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-1.5 rounded-lg transition-colors">
                                 <span class="material-symbols-outlined text-[20px]">edit</span>
@@ -786,13 +856,42 @@
         }
 
 
+        // --- Column Visibility Logic ---
+        function toggleColumn(index) {
+            // Toggle State
+            if (typeof window.columnVisibility === 'undefined') {
+                window.columnVisibility = [true, true, true, true, true, true, true, true];
+            }
+            window.columnVisibility[index] = !window.columnVisibility[index];
+            const isVisible = window.columnVisibility[index];
+
+            const table = document.getElementById('proposalTable');
+            const header = table.querySelectorAll('thead th')[index];
+            const rows = table.querySelectorAll('tbody tr');
+
+            // Toggle header
+            if (header) {
+                if (isVisible) header.classList.remove('hidden');
+                else header.classList.add('hidden');
+            }
+
+            // Toggle all cells in that column
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length > index) {
+                    if (isVisible) cells[index].classList.remove('hidden');
+                    else cells[index].classList.add('hidden');
+                }
+            });
+        }
+
         // --- Toast Logic ---
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
 
             // Create toast element
             const toast = document.createElement('div');
-            toast.className = `min-w-[320px] max-w-md w-full bg-white dark:bg-[#1a2634] shadow-2xl rounded-xl pointer-events-auto flex ring-1 ring-black ring-opacity-5 transform transition-all duration-300 translate-x-full opacity-0 overflow-hidden border-l-4 ${type === 'success' ? 'border-green-500' : type === 'error' ? 'border-red-500' : 'border-blue-500'}`;
+            toast.className = `min - w - [320px] max - w - md w - full bg - white dark: bg - [#1a2634] shadow - 2xl rounded - xl pointer - events - auto flex ring - 1 ring - black ring - opacity - 5 transform transition - all duration - 300 translate - x - full opacity - 0 overflow - hidden border - l - 4 ${type === 'success' ? 'border-green-500' : type === 'error' ? 'border-red-500' : 'border-blue-500'} `;
 
             // Icon
             let iconColor = 'text-blue-500';
@@ -807,7 +906,7 @@
             }
 
             toast.innerHTML = `
-                <div class="p-4 flex items-start w-full">
+                    < div class="p-4 flex items-start w-full" >
                     <div class="flex-shrink-0">
                       <span class="material-symbols-outlined ${iconColor} text-[24px]">${iconName}</span>
                     </div>
@@ -820,8 +919,8 @@
                         <span class="material-symbols-outlined text-[18px]">close</span>
                       </button>
                     </div>
-                </div>
-            `;
+                </div >
+                    `;
 
             container.appendChild(toast);
 
@@ -844,10 +943,10 @@
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
 
-            toast.className = `min-w-[320px] max-w-md w-full bg-white dark:bg-[#1a2634] shadow-2xl rounded-xl pointer-events-auto flex flex-col ring-1 ring-black ring-opacity-5 transform transition-all duration-300 translate-x-full opacity-0 overflow-hidden border-l-4 border-yellow-500`;
+            toast.className = `min - w - [320px] max - w - md w - full bg - white dark: bg - [#1a2634] shadow - 2xl rounded - xl pointer - events - auto flex flex - col ring - 1 ring - black ring - opacity - 5 transform transition - all duration - 300 translate - x - full opacity - 0 overflow - hidden border - l - 4 border - yellow - 500`;
 
             toast.innerHTML = `
-                <div class="p-4 flex items-start w-full">
+                    < div class="p-4 flex items-start w-full" >
                     <div class="flex-shrink-0">
                       <span class="material-symbols-outlined text-yellow-500 text-[24px]">warning</span>
                     </div>
@@ -862,7 +961,7 @@
                         </button>
                       </div>
                     </div>
-                </div>
+                </div >
             `;
 
             container.appendChild(toast);
