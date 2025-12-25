@@ -142,8 +142,8 @@
                     </div>
                 </div>
 
-                <!-- Table Wrapper (No overflow-x-auto to allow sticky) -->
-                <div>
+                <!-- Table Wrapper (Scrollable on mobile) -->
+                <div class="overflow-x-auto rounded-lg border border-[#e5e7eb] dark:border-[#2a3848]">
                     <table class="w-full text-left text-sm relative border-collapse">
                         <thead
                             class="sticky top-0 z-10 bg-[#f8fafc] dark:bg-[#0f172a] text-[#637588] dark:text-[#94a3b8] shadow-sm outline outline-1 outline-[#e5e7eb] dark:outline-[#2a3848]">
@@ -189,7 +189,7 @@
         <div class="fixed inset-0 z-10 overflow-y-auto">
             <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
                 <div
-                    class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-4xl">
+                    class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all w-full sm:my-8 sm:w-full sm:max-w-4xl">
                     <form id="formProposal">
                         <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                             <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4" id="modal-title">Buat Proposal
