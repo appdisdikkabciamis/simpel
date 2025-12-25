@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Daftar Proposal - SIMPEL</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-[#111418] dark:text-white overflow-hidden h-screen flex">
+
+    <!-- Sidebar -->
+    <aside id="sidebar"
+        class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-[#1a2634] flex flex-col h-full border-r border-[#e5e7eb] dark:border-[#2a3848] shrink-0 transition-transform duration-300 -translate-x-full md:translate-x-0 md:static">
+        <div class="h-auto py-4 flex flex-col items-center justify-center gap-1 px-6 shrink-0 relative">
+            <h1 class="text-xl font-bold tracking-tight text-[#111418] dark:text-white">SIMPEL</h1>
+            <p class="text-[10px] font-medium text-center text-gray-500 dark:text-gray-400 leading-tight max-w-[200px]">
+                Sistem Informasi Manajemen Pengajuan dan Laporan</p>
+            <!-- Close Button for Mobile -->
+            <button onclick="document.getElementById('sidebar').classList.add('-translate-x-full')"
+                class="absolute right-4 top-4 md:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <nav class="flex-1 overflow-y-auto px-4 py-2 flex flex-col gap-2">
+            <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-[#637588] dark:text-[#94a3b8] hover:bg-[#f0f2f4] dark:hover:bg-[#2a3848] transition-colors group"
+                href="dashboard.html">
+                <span class="material-symbols-outlined group-hover:text-primary transition-colors">dashboard</span>
+                <span class="text-sm font-medium">Beranda</span>
+            </a>
+            <!-- Removed Input Proposal Link -->
+            <a class="flex items-center gap-3 px-3 py-3 rounded-lg bg-primary text-white shadow-sm transition-colors"
+                href="daftar_proposal.html">
+                <span class="material-symbols-outlined">list_alt</span>
+                <span class="text-sm font-medium">Daftar Proposal</span>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-[#637588] dark:text-[#94a3b8] hover:bg-[#f0f2f4] dark:hover:bg-[#2a3848] transition-colors group"
+                href="#">
+                <span class="material-symbols-outlined group-hover:text-primary transition-colors">analytics</span>
+                <span class="text-sm font-medium">Laporan</span>
+            </a>
+            <div class="h-px bg-[#e5e7eb] dark:bg-[#2a3848] my-2 mx-3"></div>
+            <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-[#637588] dark:text-[#94a3b8] hover:bg-[#f0f2f4] dark:hover:bg-[#2a3848] transition-colors group"
+                href="#">
+                <span class="material-symbols-outlined group-hover:text-primary transition-colors">settings</span>
+                <span class="text-sm font-medium">Pengaturan</span>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors group"
+                href="index.html">
+                <span class="material-symbols-outlined">logout</span>
+                <span class="text-sm font-medium">Keluar</span>
+            </a>
+        </nav>
+
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+        <header
+            class="h-16 bg-white dark:bg-[#1a2634] border-b border-[#e5e7eb] dark:border-[#2a3848] flex items-center justify-between px-6 shrink-0 z-10">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()"
+                    class="p-1 -ml-2 text-[#637588] hover:bg-gray-100 rounded-lg dark:text-[#94a3b8] dark:hover:bg-[#2a3848] transition-colors">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-sm font-semibold text-[#111418] dark:text-white">Administrator</span>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-auto px-4 md:px-8 scroll-smooth relative">
+            <!-- Sub-Header: Title & Action -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mt-4 md:mt-8 mb-6 shrink-0">
+                <h2 class="text-2xl font-bold text-[#111418] dark:text-white">Daftar Semua Proposal</h2>
+                <button onclick="toggleModal(true)"
+                    class="flex items-center gap-2 bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all shadow-md active:scale-95 w-full md:w-auto justify-center">
+                    <span class="material-symbols-outlined text-[18px]">add</span>
+                    Tambah Proposal
+                </button>
+            </div>
+
+            <div
+                class="bg-white dark:bg-[#1a2634] rounded-xl border border-[#e5e7eb] dark:border-[#2a3848] shadow-sm flex flex-col mb-4 md:mb-8">
+
+                <!-- Table Controls -->
+                <div
+                    class="p-4 border-b border-[#e5e7eb] dark:border-[#2a3848] flex items-center justify-between shrink-0">
+                    <div class="flex items-center gap-2 text-sm text-[#637588] dark:text-[#94a3b8]">
+                        <span>Tampilkan</span>
+                        <select id="entriesSelect"
+                            class="border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded-lg text-sm focus:ring-primary focus:border-primary">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                            <option value="-1">Semua</option>
+                        </select>
+                        <span>entri</span>
+                    </div>
+
+                    <!-- Search Input Moved Here -->
+                    <div class="relative">
+                        <span
+                            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-[20px]">search</span>
+                        <input type="text" id="searchInput" placeholder="Cari proposal..."
+                            class="pl-10 pr-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm focus:ring-primary focus:border-primary transition-all w-64">
+                    </div>
+                </div>
+
+                <!-- Table Wrapper (No overflow-x-auto to allow sticky) -->
+                <div>
+                    <table class="w-full text-left text-sm relative border-collapse">
+                        <thead
+                            class="sticky top-0 z-10 bg-[#f8fafc] dark:bg-[#0f172a] text-[#637588] dark:text-[#94a3b8] shadow-sm outline outline-1 outline-[#e5e7eb] dark:outline-[#2a3848]">
+                            <tr>
+                                <th class="px-5 py-3 font-medium">No</th>
+                                <th class="px-5 py-3 font-medium">Judul Proposal</th>
+                                <th class="px-5 py-3 font-medium">NPSN</th>
+                                <th class="px-5 py-3 font-medium">Nama Sekolah</th>
+                                <th class="px-5 py-3 font-medium">Kecamatan</th>
+                                <th class="px-5 py-3 font-medium">Tanggal Proposal</th>
+                                <th class="px-5 py-3 font-medium">Tanggal Diterima</th>
+                                <th class="px-5 py-3 font-medium text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody" class="divide-y divide-[#e5e7eb] dark:divide-[#2a3848]">
+                            <tr>
+                                <td colspan="6" class="px-5 py-4 text-center">Memuat data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="p-4 border-t border-[#e5e7eb] dark:border-[#2a3848] flex items-center justify-between">
+                    <div class="text-sm text-[#637588] dark:text-[#94a3b8]" id="tableInfo">
+                        Menampilkan 0 sampai 0 dari 0 entri
+                    </div>
+                    <div class="flex gap-2">
+                        <button id="btnPrev" disabled
+                            class="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200 disabled:opacity-50 text-sm font-medium transition-colors">Sebelumnya</button>
+                        <button id="btnNext" disabled
+                            class="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200 disabled:opacity-50 text-sm font-medium transition-colors">Selanjutnya</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Form -->
+    <div id="modalProposal" class="relative z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity backdrop-blur-sm"></div>
+
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div
+                    class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-4xl">
+                    <form id="formProposal">
+                        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                            <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4" id="modal-title">Buat Proposal
+                                Baru</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Col 1 -->
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">Tanggal Proposal</label>
+                                        <input type="date" id="tanggal"
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">NPSN</label>
+                                        <input type="text" id="npsn"
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">Kecamatan</label>
+                                        <input type="text" id="kecamatan" disabled
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm bg-gray-100 cursor-not-allowed">
+                                    </div>
+                                </div>
+
+                                <!-- Col 2 -->
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">Tanggal Diterima</label>
+                                        <input type="date" id="tanggalDiterima"
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">Nama Sekolah</label>
+                                        <input type="text" id="namaSekolah" disabled
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm bg-gray-100 cursor-not-allowed">
+                                    </div>
+                                </div>
+
+                                <!-- Full Width -->
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700">Judul Proposal</label>
+                                    <textarea id="jenisBantuan" rows="3"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"></textarea>
+                                </div>
+                                <input type="hidden" id="proposalId">
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                            <button type="submit" id="btnSubmitProposal"
+                                class="inline-flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">Simpan</button>
+                            <button type="button" onclick="toggleModal(false)"
+                                class="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">Batal</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-5 right-5 z-[100] flex flex-col gap-3 pointer-events-none"></div>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbzxvd3NXMiJOT9TYoyGB8lvHIY4h64ABVGVvL-lAq_zegrZ3-vry4YLplYjDUSIf9SiDQ/exec";
+        let allRows = []; // Store all data locally for search
+        let filteredRows = []; // Data currently being displayed after search/filter
+        let currentPage = 1;
+        let rowsPerPage = 10;
+
+
+        // Toggle Sidebar Responsive
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            // Desktop (md: 768px and up)
+            if (window.innerWidth >= 768) {
+                sidebar.classList.toggle('hidden');
+            } else {
+                // Mobile
+                sidebar.classList.toggle('-translate-x-full');
+            }
+        }
+
+        function toggleModal(show) {
+            const modal = document.getElementById('modalProposal');
+            if (show) {
+                modal.classList.remove('hidden');
+                // Ensure default state for "Add"
+                if (document.getElementById('modal-title').innerText !== "Edit Proposal") {
+                    document.getElementById('formProposal').reset();
+                    document.getElementById('proposalId').value = '';
+                    document.getElementById('modal-title').innerText = "Buat Proposal Baru";
+                    document.getElementById('btnSubmitProposal').innerText = "Simpan";
+
+                    // Reset disabled states
+                    const namaSekolahInput = document.getElementById('namaSekolah');
+                    const kecamatanInput = document.getElementById('kecamatan');
+                    namaSekolahInput.disabled = true;
+                    kecamatanInput.disabled = true;
+                    namaSekolahInput.classList.add('bg-gray-100', 'cursor-not-allowed');
+                    kecamatanInput.classList.add('bg-gray-100', 'cursor-not-allowed');
+                }
+            } else {
+                modal.classList.add('hidden');
+                // Reset on close is good practice too
+                document.getElementById('formProposal').reset();
+                document.getElementById('proposalId').value = '';
+                document.getElementById('modal-title').innerText = "Buat Proposal Baru";
+                document.getElementById('btnSubmitProposal').innerText = "Simpan";
+            }
+        }
+
+        function openEditModal(encodedData) {
+            const data = JSON.parse(decodeURIComponent(encodedData));
+            // Ensure we are working with normalized 8-col structure or use dynamic finding
+            // Since we pass the RAW row from renderTable, we should rely on dynamic finding based on length OR normalized data passed from renderTable.
+            // renderTable NOW normalizes data. So we can expect a consistent structure if we use the normalized row.
+            // My renderTable update below will normalize to 8 columns. [ID, ?, ?, TGLP, TGLD, NAMA, KEC, JUDUL]
+
+            document.getElementById('proposalId').value = data[0];
+            const len = data.length;
+
+            // Helper to parse multiple formats
+            const parseDateAny = (val) => {
+                if (!val) return '';
+                // Try standard ID/ISO
+                let d = new Date(val);
+                if (!isNaN(d.getTime())) return d;
+
+                // Try DD/MM/YYYY or DD-MM-YYYY
+                const parts = String(val).match(/(\d{1,2})[-/](\d{1,2})[-/](\d{4})/);
+                if (parts) {
+                    // parts[1]=Day, parts[2]=Month, parts[3]=Year
+                    return new Date(`${parts[3]}-${parts[2]}-${parts[1]}`);
+                }
+                return null;
+            };
+
+            // Updated Mapping for 6-Column Sheet + ID (Total 7)
+            // Data Structure: [RowID, TGLP, TGLD, NPSN, NAMA, KEC, JUDUL]
+            // Indices:           0      1     2     3     4     5     6
+
+            // Tanggal Proposal (Index 1)
+            let tglProp = '';
+            const dp = parseDateAny(data[1]);
+            if (dp) {
+                const year = dp.getFullYear();
+                const month = String(dp.getMonth() + 1).padStart(2, '0');
+                const day = String(dp.getDate()).padStart(2, '0');
+                tglProp = `${year}-${month}-${day}`;
+            }
+            document.getElementById('tanggal').value = tglProp;
+
+            // Tanggal Diterima (Index 2)
+            let tglRec = '';
+            const dr = parseDateAny(data[2]);
+            if (dr) {
+                const year = dr.getFullYear();
+                const month = String(dr.getMonth() + 1).padStart(2, '0');
+                const day = String(dr.getDate()).padStart(2, '0');
+                tglRec = `${year}-${month}-${day}`;
+            }
+            document.getElementById('tanggalDiterima').value = tglRec;
+
+            // Updated Mapping for 6-Column Sheet (Index 0 is ID)
+            // Data: [ID, TGLP, TGLD, NPSN, NAMA, KEC, JUDUL]
+            // Indices: 0,   1,    2,    3,    4,    5,     6
+
+            // Fallback for legacy (check length)
+            if (len >= 7) {
+                document.getElementById('npsn').value = data[3] || '';
+                document.getElementById('namaSekolah').value = data[4] || '';
+                document.getElementById('kecamatan').value = data[5] || '';
+                document.getElementById('jenisBantuan').value = data[6] || '';
+            } else {
+                // Try legacy fallback or heuristic
+                // Assuming legacy didn't have NPSN, skip it?
+                document.getElementById('npsn').value = '';
+                // ... keep existing logic if needed or just rely on new structure 
+                // For now, let's assume the user is migrating or creating new data mostly.
+                document.getElementById('namaSekolah').value = data[len - 3] || '';
+                document.getElementById('kecamatan').value = data[len - 2] || '';
+                document.getElementById('jenisBantuan').value = data[len - 1] || '';
+            }
+
+            document.getElementById('modal-title').innerText = "Edit Proposal";
+            document.getElementById('btnSubmitProposal').innerText = "Ubah";
+            const modal = document.getElementById('modalProposal');
+            modal.classList.remove('hidden');
+        }
+
+        function deleteProposal(id) {
+            showConfirmToast("Apakah Anda yakin ingin menghapus proposal ini?", () => {
+                executeDelete(id);
+            });
+        }
+
+        async function executeDelete(id) {
+            // Optimistic UI or Loading
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '<tr><td colspan="6" class="px-5 py-4 text-center">Menghapus data...</td></tr>';
+
+            try {
+                // Must use text/plain or standard fetch since GAS handling can be tricky with CORS if not properly set, 
+                // but we used JSON successfully before.
+                // We must ensure the ID is sent.
+                const res = await fetch(API_URL + "?action=hapus", {
+                    method: "POST",
+                    body: JSON.stringify({ id: id })
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    showToast("Data berhasil dihapus", 'success');
+                    fetchData();
+                } else {
+                    showToast("Gagal menghapus: " + data.message, 'error');
+                    fetchData(); // Reload to restore table
+                }
+            } catch (e) {
+                console.error(e);
+                showToast("Gagal koneksi", 'error');
+                fetchData();
+            }
+        }
+
+        document.getElementById('formProposal').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = e.submitter;
+            const originalText = btn.innerText;
+            btn.innerText = 'Menyimpan...';
+            btn.disabled = true;
+
+
+            // Validation Logic
+            const npsnVal = document.getElementById('npsn').value.trim();
+            const namaSekolahVal = document.getElementById('namaSekolah').value;
+            const kecamatanVal = document.getElementById('kecamatan').value;
+            const judulVal = document.getElementById('jenisBantuan').value.trim();
+            const tglVal = document.getElementById('tanggal').value;
+
+            if (!npsnVal || !tglVal || !judulVal) {
+                showToast("Harap lengkapi semua data wajib!", 'error');
+                btn.innerText = originalText;
+                btn.disabled = false;
+                return;
+            }
+
+            // Specific validation for Invalid NPSN (NPSN filled but School Name empty)
+            if (npsnVal && (!namaSekolahVal || !kecamatanVal)) {
+                showToast("Data sekolah tidak ditemukan. Periksa kembali NPSN.", 'error');
+                btn.innerText = originalText;
+                btn.disabled = false;
+                return;
+            }
+
+            const id = document.getElementById('proposalId').value;
+            const payload = {
+                id: id,
+                tanggal: tglVal,
+                tanggalDiterima: document.getElementById('tanggalDiterima').value,
+                npsn: npsnVal,
+                namaSekolah: namaSekolahVal,
+                kecamatan: kecamatanVal,
+                jenisBantuan: judulVal
+            };
+
+            const action = id ? "update" : "simpan";
+
+            fetch(API_URL + "?action=" + action, {
+                method: "POST",
+                body: JSON.stringify(payload)
+            })
+                .then(res => res.json())
+                .then(data => {
+                    showToast("Berhasil: " + data.message, 'success');
+                    toggleModal(false);
+                    fetchData(); // Refresh Data
+                })
+                .catch(err => {
+                    console.error(err);
+                    showToast("Gagal koneksi: " + err, 'error');
+                })
+                .finally(() => {
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                });
+        });
+
+        function fetchData() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '<tr><td colspan="6" class="px-5 py-4 text-center">Sedang mengambil data terbaru...</td></tr>';
+
+            fetch(API_URL + "?action=baca")
+                .then(res => res.json())
+                .then(response => {
+                    if (response.status === 'success') {
+                        // Reverse here strictly relative to original logic (newest text)
+                        // Actually better to reverse in render or just here once.
+                        // Let's reverse here once.
+                        // Let's reverse here once.
+                        allRows = response.data.slice().reverse();
+
+                        // DEBUG: Show first row structure
+                        if (allRows.length > 0) {
+                            console.log("DEBUG RAW ROW:", allRows[0]);
+                            // alert("DEBUG ROW 1: " + JSON.stringify(allRows[0])); 
+                        }
+
+                        filteredRows = [...allRows];
+                        currentPage = 1; // Reset current page when new data is fetched
+                        renderTable();
+                    } else {
+                        tbody.innerHTML = '<tr><td colspan="6" class="px-5 py-4 text-center text-red-500">Gagal mengambil data</td></tr>';
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    tbody.innerHTML = '<tr><td colspan="6" class="px-5 py-4 text-center text-red-500">Terjadi kesalahan koneksi</td></tr>';
+                });
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            if (filteredRows.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="px-5 py-4 text-center">Tidak ada data ditemukan.</td></tr>';
+                updatePagination(0, 0);
+                return;
+            }
+
+            // Universal Robust Normalization
+            // Strategy: End-Aligned for everything to handle "No" column or "Gaps"
+            const normalizedRows = filteredRows.map(r => {
+                const len = r.length;
+                let id = r[0];
+                let tglP = '', tglD = '', npsn = '', nama = '', kec = '', judul = '';
+
+                // Expected: [ID, TGLP, TGLD, NPSN, NAMA, KEC, JUDUL] (7 items)
+                if (len >= 7) {
+                    tglP = r[1];
+                    tglD = r[2];
+                    npsn = r[3];
+                    nama = r[4];
+                    kec = r[5];
+                    judul = r[6];
+                } else if (len >= 6) {
+                    // Maybe old structure [ID, TGLP, TGLD, NAMA, KEC, JUDUL]
+                    tglP = r[1];
+                    tglD = r[2];
+                    nama = r[3];
+                    kec = r[4];
+                    judul = r[5];
+                } else {
+                    // Legacy <=5
+                    if (len > 1) tglP = r[1];
+                    if (len > 2) nama = r[2];
+                    if (len > 3) kec = r[3];
+                    if (len > 4) judul = r[4];
+                }
+
+                return [id, tglP, tglD, npsn, nama, kec, judul];
+            });
+
+            // Pagination Logic
+            let startIndex = (currentPage - 1) * rowsPerPage;
+            let endIndex = startIndex + rowsPerPage;
+
+            if (rowsPerPage === -1) { // "Semua" option
+                startIndex = 0;
+                endIndex = normalizedRows.length;
+            }
+
+            const pageRows = normalizedRows.slice(startIndex, endIndex);
+
+            pageRows.forEach((r, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-[#f8fafc] dark:hover:bg-[#1e293b] transition-colors";
+
+                // Helper Helper
+                const formatDate = (val) => {
+                    if (!val) return '-';
+                    let d = new Date(val);
+                    // Try DD-MM-YYYY fallback
+                    if (isNaN(d.getTime())) {
+                        const parts = String(val).match(/(\d{1,2})[-/](\d{1,2})[-/](\d{4})/);
+                        if (parts) d = new Date(`${parts[3]}-${parts[2]}-${parts[1]}`);
+                    }
+
+                    if (!isNaN(d.getTime())) {
+                        return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+                    }
+                    return val; // Return RAW value if parse fails (Debug Mode)
+                };
+
+                let dateProposalStr = formatDate(r[1]);
+                let dateReceivedStr = formatDate(r[2]);
+
+                // Encode for passing to onclick
+                const rowData = encodeURIComponent(JSON.stringify(r));
+
+                const rowNum = startIndex + index + 1;
+
+                tr.innerHTML = `
+                    <td class="px-5 py-4 text-[#637588] dark:text-[#94a3b8]">${rowNum}</td>
+                    <td class="px-5 py-4 font-medium text-gray-900 dark:text-white">${r[6] || '-'}</td>
+                    <td class="px-5 py-4 text-[#637588] dark:text-[#94a3b8]">${r[3] || '-'}</td>
+                    <td class="px-5 py-4 text-[#637588] dark:text-[#94a3b8]">${r[4] || '-'}</td>
+                    <td class="px-5 py-4">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
+                            ${r[5] || '-'}
+                        </span>
+                    </td>
+                    <td class="px-5 py-4 text-[#637588] dark:text-[#94a3b8]">${dateProposalStr}</td>
+                    <td class="px-5 py-4 text-[#637588] dark:text-[#94a3b8]">${dateReceivedStr}</td>
+                    <td class="px-5 py-4 text-right">
+                         <div class="flex items-center justify-end gap-2">
+                            <button onclick="openEditModal('${rowData}')" title="Edit" class="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-1.5 rounded-lg transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">edit</span>
+                            </button>
+                            <button onclick="deleteProposal('${r[0]}')" title="Hapus" class="text-red-600 hover:text-red-800 hover:bg-red-50 p-1.5 rounded-lg transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">delete</span>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            updatePagination(filteredRows.length, pageRows.length);
+        }
+
+        function updatePagination(totalItems, currentItemsCount) {
+            // Update Info text
+            const infoEl = document.getElementById('tableInfo');
+            const btnPrev = document.getElementById('btnPrev');
+            const btnNext = document.getElementById('btnNext');
+
+            if (totalItems === 0) {
+                infoEl.innerText = "Menampilkan 0 sampai 0 dari 0 entri";
+                btnPrev.disabled = true;
+                btnNext.disabled = true;
+                return;
+            }
+
+            let start = (currentPage - 1) * rowsPerPage + 1;
+            let end = start + currentItemsCount - 1;
+
+            if (rowsPerPage === -1) {
+                start = 1;
+                end = totalItems;
+            }
+
+            infoEl.innerText = `Menampilkan ${start} sampai ${end} dari ${totalItems} entri`;
+
+            // Button State
+            if (currentPage === 1) {
+                btnPrev.disabled = true;
+            } else {
+                btnPrev.disabled = false;
+            }
+
+            // If we showed all items or reached end
+            if (rowsPerPage === -1 || end >= totalItems) {
+                btnNext.disabled = true;
+            } else {
+                btnNext.disabled = false;
+            }
+        }
+
+        // Event Listeners
+        document.getElementById('entriesSelect').addEventListener('change', (e) => {
+            rowsPerPage = parseInt(e.target.value);
+            currentPage = 1; // Reset to page 1
+            renderTable();
+        });
+
+        document.getElementById('btnPrev').addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderTable();
+            }
+        });
+
+        document.getElementById('btnNext').addEventListener('click', () => {
+            // Calculate max page
+            const maxPage = Math.ceil(filteredRows.length / rowsPerPage);
+            if (currentPage < maxPage) {
+                currentPage++;
+                renderTable();
+            }
+        });
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const keyword = e.target.value.toLowerCase();
+            filteredRows = allRows.filter(row => {
+                // Normalize for search using same 6/7 rule or just indices if mapped correctly?
+                // Actually we filter BEFORE normalization in this code structure (filteredRows = allRows.filter...)
+                // We should technically normalize ALL rows first?
+                // Or just be smart.
+                // If len < 7 (likely 6 with NO, or 5 Legacy), map accordingly.
+                /*
+                   5: [ID, TGL, NAMA, KEC, JUDUL] -> N=2, K=3, J=4
+                   6: [ID, NO, TGL, NAMA, KEC, JUDUL] -> N=3, K=4, J=5
+                   7: [ID, NO, TGL, TGLD, NAMA, KEC, JUDUL] -> N=4, K=5, J=6
+                */
+                const len = row.length;
+                if (len <= 5) { // Legacy
+                    nama = row[2]; kec = row[3]; jenis = row[4];
+                } else {
+                    // Modern: End-Aligned Text
+                    jenis = row[len - 1];
+                    kec = row[len - 2];
+                    nama = row[len - 3];
+                }
+                return (nama || '').toString().toLowerCase().includes(keyword) ||
+                    (kec || '').toString().toLowerCase().includes(keyword) ||
+                    (jenis || '').toString().toLowerCase().includes(keyword);
+            });
+            currentPage = 1; // Reset to page 1 on search
+            renderTable();
+        });
+
+        // Auto load
+        document.addEventListener('DOMContentLoaded', fetchData);
+
+        // NPSN Autofill Logic
+        const npsnInput = document.getElementById('npsn');
+        const namaSekolahInput = document.getElementById('namaSekolah');
+        const kecamatanInput = document.getElementById('kecamatan');
+
+        let searchTimeout;
+
+        npsnInput.addEventListener('input', function () {
+            clearTimeout(searchTimeout);
+            const npsn = this.value.trim();
+
+            // Reset fields but keep disabled until found or user manual override needed?
+            // User requested: "otomatis terisi... sehingga textbox... disable"
+            // So default state should probably be disabled IF using NPSN?
+            // Actually, let's keep them disabled by default as per my edit above.
+
+            if (npsn.length >= 8) { // Variable length check, usually 8
+                searchTimeout = setTimeout(() => {
+                    cariNPSN(npsn);
+                }, 800); // 800ms debounce
+            } else {
+                namaSekolahInput.value = '';
+                kecamatanInput.value = '';
+            }
+        });
+
+        async function cariNPSN(npsn) {
+            // Un-disable momentarily? No, keep disabled to show it's system managed.
+            namaSekolahInput.placeholder = "Mencari data...";
+            kecamatanInput.placeholder = "Mencari...";
+
+            try {
+                const res = await fetch(API_URL + "?action=cari_npsn&npsn=" + npsn);
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    namaSekolahInput.value = data.data.namaSekolah;
+                    kecamatanInput.value = data.data.kecamatan;
+
+                    // Keep them disabled as requested
+                    namaSekolahInput.disabled = true;
+                    kecamatanInput.disabled = true;
+                    namaSekolahInput.classList.add('bg-gray-100', 'cursor-not-allowed');
+                    kecamatanInput.classList.add('bg-gray-100', 'cursor-not-allowed');
+
+                } else {
+                    // Not found behavior: Kosongkan fields
+                    namaSekolahInput.value = '';
+                    kecamatanInput.value = '';
+
+                    showToast("Data NPSN tidak ditemukan", 'error');
+
+                    // Keep disabled
+                    namaSekolahInput.disabled = true;
+                    kecamatanInput.disabled = true;
+                    namaSekolahInput.classList.add('bg-gray-100', 'cursor-not-allowed');
+                    kecamatanInput.classList.add('bg-gray-100', 'cursor-not-allowed');
+                }
+            } catch (e) {
+                console.error(e);
+                // Fallback on error
+                namaSekolahInput.disabled = false;
+                kecamatanInput.disabled = false;
+                namaSekolahInput.classList.remove('bg-gray-100', 'cursor-not-allowed');
+                kecamatanInput.classList.remove('bg-gray-100', 'cursor-not-allowed');
+            }
+        }
+
+
+        // --- Toast Logic ---
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.className = `min-w-[320px] max-w-md w-full bg-white dark:bg-[#1a2634] shadow-2xl rounded-xl pointer-events-auto flex ring-1 ring-black ring-opacity-5 transform transition-all duration-300 translate-x-full opacity-0 overflow-hidden border-l-4 ${type === 'success' ? 'border-green-500' : type === 'error' ? 'border-red-500' : 'border-blue-500'}`;
+
+            // Icon
+            let iconColor = 'text-blue-500';
+            let iconName = 'info';
+
+            if (type === 'success') {
+                iconColor = 'text-green-500';
+                iconName = 'check_circle';
+            } else if (type === 'error') {
+                iconColor = 'text-red-500';
+                iconName = 'error';
+            }
+
+            toast.innerHTML = `
+                <div class="p-4 flex items-start w-full">
+                    <div class="flex-shrink-0">
+                      <span class="material-symbols-outlined ${iconColor} text-[24px]">${iconName}</span>
+                    </div>
+                    <div class="ml-3 w-0 flex-1 pt-0.5">
+                      <p class="text-sm font-semibold text-gray-900 dark:text-white leading-relaxed">${message}</p>
+                    </div>
+                    <div class="ml-4 flex-shrink-0 flex self-start">
+                      <button onclick="this.parentElement.parentElement.parentElement.remove()" class="bg-transparent rounded-md inline-flex text-gray-400 hover:text-gray-500 focus:outline-none">
+                        <span class="sr-only">Close</span>
+                        <span class="material-symbols-outlined text-[18px]">close</span>
+                      </button>
+                    </div>
+                </div>
+            `;
+
+            container.appendChild(toast);
+
+            // Animate In
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-x-full', 'opacity-0');
+            });
+
+            // Auto Remove
+            setTimeout(() => {
+                toast.classList.add('translate-x-full', 'opacity-0');
+                setTimeout(() => {
+                    if (toast.parentElement) toast.remove();
+                }, 300); // Wait for transition
+            }, 3000); // 3 Seconds
+        }
+
+        // --- Toast Confirmation Logic ---
+        function showConfirmToast(message, onConfirm) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+
+            toast.className = `min-w-[320px] max-w-md w-full bg-white dark:bg-[#1a2634] shadow-2xl rounded-xl pointer-events-auto flex flex-col ring-1 ring-black ring-opacity-5 transform transition-all duration-300 translate-x-full opacity-0 overflow-hidden border-l-4 border-yellow-500`;
+
+            toast.innerHTML = `
+                <div class="p-4 flex items-start w-full">
+                    <div class="flex-shrink-0">
+                      <span class="material-symbols-outlined text-yellow-500 text-[24px]">warning</span>
+                    </div>
+                    <div class="ml-3 w-0 flex-1 pt-0.5">
+                      <p class="text-sm font-semibold text-gray-900 dark:text-white leading-relaxed">${message}</p>
+                      <div class="mt-3 flex gap-3">
+                        <button id="btn-confirm-yes" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-2 px-4 rounded shadow-sm transition-colors">
+                            HAPUS
+                        </button>
+                        <button id="btn-confirm-no" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs font-bold py-2 px-4 rounded shadow-sm transition-colors">
+                            BATAL
+                        </button>
+                      </div>
+                    </div>
+                </div>
+            `;
+
+            container.appendChild(toast);
+
+            // Animate In
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-x-full', 'opacity-0');
+            });
+
+            // Bind Events
+            const btnYes = toast.querySelector('#btn-confirm-yes');
+            const btnNo = toast.querySelector('#btn-confirm-no');
+
+            btnYes.onclick = () => {
+                onConfirm();
+                removeToast(toast);
+            };
+
+            btnNo.onclick = () => {
+                removeToast(toast);
+            };
+
+            // Auto Remove after 10s (Longer for confirmation)
+            setTimeout(() => {
+                if (toast.parentElement) removeToast(toast);
+            }, 10000);
+        }
+
+        function removeToast(toast) {
+            toast.classList.add('translate-x-full', 'opacity-0');
+            setTimeout(() => {
+                if (toast.parentElement) toast.remove();
+            }, 300);
+        }
+    </script>
+</body>
+
+</html>
+```

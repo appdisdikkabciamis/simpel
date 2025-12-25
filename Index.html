@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Login - SIMPEL</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+
+        @keyframes moveBackground {
+            0% {
+                transform: scale(1) translate(0, 0);
+            }
+
+            50% {
+                transform: scale(1.15) translate(-2%, -1%);
+            }
+
+            100% {
+                transform: scale(1) translate(0, 0);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-white dark:bg-[#101922] min-h-screen flex overflow-hidden">
+
+    <!-- Left Side: Illustration & Branding -->
+    <div
+        class="hidden md:flex w-1/2 bg-[#101922] relative overflow-hidden items-center justify-center text-center p-12">
+        <!-- Background Image/Pattern -->
+        <div class="absolute inset-0 opacity-40"
+            style="background-image: url('login_illustration.png'); background-size: cover; background-position: center; animation: moveBackground 30s infinite alternate ease-in-out;">
+        </div>
+
+        <!-- Overlay Content -->
+        <div class="relative z-10 max-w-lg">
+
+            <h1 class="text-4xl font-bold tracking-tight text-white mb-4">SIMPEL</h1>
+            <p class="text-lg text-blue-200">Sistem Informasi Manajemen Pengajuan dan Laporan dari Satuan Pendidikan</p>
+        </div>
+    </div>
+
+    <!-- Right Side: Login Form -->
+    <div class="w-full md:w-1/2 flex items-center justify-center p-8 bg-white dark:bg-[#1a2634]">
+        <div class="w-full max-w-md space-y-8">
+            <div class="text-center md:text-left">
+                <h2 class="text-3xl font-bold text-[#111418] dark:text-white tracking-tight">Masuk Aplikasi</h2>
+                <p class="mt-2 text-[#637588] dark:text-[#94a3b8]">Silakan masukkan kode akses Anda untuk melanjutkan.
+                </p>
+            </div>
+
+            <!-- Separator (like the 'or' line in the image, but maybe just a visual break) -->
+            <div class="flex items-center gap-4 my-8">
+                <div class="h-px bg-gray-200 dark:bg-gray-700 flex-1"></div>
+                <span class="text-xs font-semibold text-gray-400 uppercase tracking-widest">Akses Pengguna</span>
+                <div class="h-px bg-gray-200 dark:bg-gray-700 flex-1"></div>
+            </div>
+
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-semibold text-[#111418] dark:text-white mb-2">Kode Akses</label>
+                    <div class="relative">
+                        <!-- Simplified Input Style per flatness request -->
+                        <input type="password" id="password" required
+                            class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-gray-700 bg-transparent text-sm focus:border-primary focus:ring-0 transition-all placeholder-gray-400 font-medium"
+                            placeholder="Contoh: 123456">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between text-sm">
+                    <label class="flex items-center gap-2 cursor-pointer select-none">
+                        <input type="checkbox" id="rememberMe"
+                            class="rounded border-gray-300 text-primary focus:ring-primary size-4">
+                        <span class="text-[#637588] dark:text-[#94a3b8] font-medium">Ingat saya</span>
+                    </label>
+                </div>
+
+                <button type="submit"
+                    class="w-full bg-primary hover:bg-blue-600 text-white py-3.5 rounded-lg font-bold transition-all active:scale-[0.98] flex items-center justify-center gap-2 shadow-none">
+                    <span>Lanjutkan</span>
+                    <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+                </button>
+            </form>
+
+
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbzxvd3NXMiJOT9TYoyGB8lvHIY4h64ABVGVvL-lAq_zegrZ3-vry4YLplYjDUSIf9SiDQ/exec";
+
+        // Check for saved password on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedPassword = localStorage.getItem('simpel_access_code');
+            if (savedPassword) {
+                document.getElementById('password').value = savedPassword;
+                document.getElementById('rememberMe').checked = true;
+            }
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = e.submitter;
+            const originalHTML = btn.innerHTML;
+            const rememberMe = document.getElementById('rememberMe').checked;
+            const password = document.getElementById('password').value;
+
+            // Simple Loading State
+            btn.innerHTML = '<span class="animate-spin text-xl material-symbols-outlined">progress_activity</span>';
+            btn.disabled = true;
+
+            fetch(API_URL + "?action=login", {
+                method: "POST",
+                body: JSON.stringify({ password: password })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Save or Clear 'Remember Me'
+                        if (rememberMe) {
+                            localStorage.setItem('simpel_access_code', password);
+                        } else {
+                            localStorage.removeItem('simpel_access_code');
+                        }
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        alert(data.message || 'Login gagal');
+                        btn.innerHTML = originalHTML;
+                        btn.disabled = false;
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Terjadi kesalahan koneksi');
+                    btn.innerHTML = originalHTML;
+                    btn.disabled = false;
+                });
+        });
+    </script>
+</body>
+
+</html>

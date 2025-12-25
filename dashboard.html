@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Dasbor SIMPEL</title>
+    <!-- Fonts: Lexend and Material Symbols -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <!-- Tailwind Configuration -->
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            font-size: 24px;
+        }
+
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        .conic-chart {
+            background: conic-gradient(#137fec 0% 65%,
+                    #22c55e 65% 85%,
+                    #f59e0b 85% 95%,
+                    #ef4444 95% 100%);
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-[#111418] dark:text-white overflow-hidden h-screen flex">
+    <!-- Sidebar -->
+    <aside id="sidebar"
+        class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-[#1a2634] flex flex-col h-full border-r border-[#e5e7eb] dark:border-[#2a3848] shrink-0 transition-transform duration-300 -translate-x-full md:translate-x-0 md:static">
+        <div class="h-auto py-4 flex flex-col items-center justify-center gap-1 px-6 shrink-0 relative">
+            <h1 class="text-xl font-bold tracking-tight text-[#111418] dark:text-white">SIMPEL</h1>
+            <p class="text-[10px] font-medium text-center text-gray-500 dark:text-gray-400 leading-tight max-w-[200px]">
+                Sistem Informasi Manajemen Pengajuan dan Laporan</p>
+            <!-- Close Button for Mobile -->
+            <button onclick="document.getElementById('sidebar').classList.add('-translate-x-full')"
+                class="absolute right-4 top-4 md:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <nav class="flex-1 overflow-y-auto px-4 py-2 flex flex-col gap-2">
+            <!-- Active Item -->
+            <a class="flex items-center gap-3 px-3 py-3 rounded-lg bg-primary text-white shadow-sm transition-colors"
+                href="dashboard.html">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="text-sm font-medium">Beranda</span>
+            </a>
+            <!-- Inactive Items -->
+
+            <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-[#637588] dark:text-[#94a3b8] hover:bg-[#f0f2f4] dark:hover:bg-[#2a3848] transition-colors group"
+                href="daftar_proposal.html">
+                <span class="material-symbols-outlined group-hover:text-primary transition-colors">list_alt</span>
+                <span class="text-sm font-medium">Daftar Proposal</span>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-[#637588] dark:text-[#94a3b8] hover:bg-[#f0f2f4] dark:hover:bg-[#2a3848] transition-colors group"
+                href="#">
+                <span class="material-symbols-outlined group-hover:text-primary transition-colors">analytics</span>
+                <span class="text-sm font-medium">Laporan</span>
+            </a>
+            <div class="h-px bg-[#e5e7eb] dark:bg-[#2a3848] my-2 mx-3"></div>
+            <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-[#637588] dark:text-[#94a3b8] hover:bg-[#f0f2f4] dark:hover:bg-[#2a3848] transition-colors group"
+                href="#">
+                <span class="material-symbols-outlined group-hover:text-primary transition-colors">settings</span>
+                <span class="text-sm font-medium">Pengaturan</span>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors group"
+                href="index.html">
+                <span class="material-symbols-outlined">logout</span>
+                <span class="text-sm font-medium">Keluar</span>
+            </a>
+        </nav>
+
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+        <!-- Top Header -->
+        <header
+            class="h-16 bg-white dark:bg-[#1a2634] border-b border-[#e5e7eb] dark:border-[#2a3848] flex items-center justify-between px-6 shrink-0 z-10">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()"
+                    class="p-1 -ml-2 text-[#637588] hover:bg-gray-100 rounded-lg dark:text-[#94a3b8] dark:hover:bg-[#2a3848] transition-colors">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-sm font-semibold text-[#111418] dark:text-white">Administrator</span>
+            </div>
+        </header>
+
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-y-auto p-4 md:p-8 scroll-smooth">
+            <div class="max-w-[1200px] mx-auto flex flex-col gap-8">
+
+                <!-- Page Heading & Action -->
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                    <div>
+                        <h2 class="text-2xl md:text-3xl font-bold text-[#111418] dark:text-white tracking-tight">Selamat
+                            Datang Administrator</h2>
+                        <p class="text-[#637588] dark:text-[#94a3b8] mt-2 text-base">Tinjauan ringkas aktivitas proposal
+                            sekolah hari ini.</p>
+                    </div>
+
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Total -->
+                    <div
+                        class="bg-white dark:bg-[#1a2634] p-5 rounded-xl border border-[#e5e7eb] dark:border-[#2a3848] shadow-sm flex flex-col justify-between h-32 relative overflow-hidden group">
+                        <div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <span class="material-symbols-outlined text-6xl text-primary">folder_open</span>
+                        </div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="p-1.5 bg-blue-50 dark:bg-blue-900/30 rounded-md text-primary">
+                                <span class="material-symbols-outlined text-[20px]">folder</span>
+                            </div>
+                            <span class="text-sm font-medium text-[#637588] dark:text-[#94a3b8]">Total Proposal</span>
+                        </div>
+                        <div>
+                            <span class="text-3xl font-bold text-[#111418] dark:text-white">124</span>
+                            <span class="text-xs text-green-600 ml-2 font-medium">↑ 12% bln ini</span>
+                        </div>
+                    </div>
+                    <!-- Pending -->
+                    <div
+                        class="bg-white dark:bg-[#1a2634] p-5 rounded-xl border border-[#e5e7eb] dark:border-[#2a3848] shadow-sm flex flex-col justify-between h-32 relative overflow-hidden group">
+                        <div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <span class="material-symbols-outlined text-6xl text-orange-500">pending</span>
+                        </div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <div
+                                class="p-1.5 bg-orange-50 dark:bg-orange-900/30 rounded-md text-orange-600 dark:text-orange-400">
+                                <span class="material-symbols-outlined text-[20px]">hourglass_top</span>
+                            </div>
+                            <span class="text-sm font-medium text-[#637588] dark:text-[#94a3b8]">Menunggu Review</span>
+                        </div>
+                        <div>
+                            <span class="text-3xl font-bold text-[#111418] dark:text-white">12</span>
+                            <span class="text-xs text-[#637588] ml-2">Perlu tindakan</span>
+                        </div>
+                    </div>
+                    <!-- Approved -->
+                    <div
+                        class="bg-white dark:bg-[#1a2634] p-5 rounded-xl border border-[#e5e7eb] dark:border-[#2a3848] shadow-sm flex flex-col justify-between h-32 relative overflow-hidden group">
+                        <div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <span class="material-symbols-outlined text-6xl text-green-500">check_circle</span>
+                        </div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <div
+                                class="p-1.5 bg-green-50 dark:bg-green-900/30 rounded-md text-green-600 dark:text-green-400">
+                                <span class="material-symbols-outlined text-[20px]">check_circle</span>
+                            </div>
+                            <span class="text-sm font-medium text-[#637588] dark:text-[#94a3b8]">Disetujui</span>
+                        </div>
+                        <div>
+                            <span class="text-3xl font-bold text-[#111418] dark:text-white">98</span>
+                        </div>
+                    </div>
+                    <!-- Rejected -->
+                    <div
+                        class="bg-white dark:bg-[#1a2634] p-5 rounded-xl border border-[#e5e7eb] dark:border-[#2a3848] shadow-sm flex flex-col justify-between h-32 relative overflow-hidden group">
+                        <div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <span class="material-symbols-outlined text-6xl text-red-500">cancel</span>
+                        </div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="p-1.5 bg-red-50 dark:bg-red-900/30 rounded-md text-red-600 dark:text-red-400">
+                                <span class="material-symbols-outlined text-[20px]">cancel</span>
+                            </div>
+                            <span class="text-sm font-medium text-[#637588] dark:text-[#94a3b8]">Ditolak</span>
+                        </div>
+                        <div>
+                            <span class="text-3xl font-bold text-[#111418] dark:text-white">14</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Grid: Table & Charts -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Left: Recent Proposals Table -->
+                    <div
+                        class="lg:col-span-2 bg-white dark:bg-[#1a2634] rounded-xl border border-[#e5e7eb] dark:border-[#2a3848] shadow-sm flex flex-col overflow-hidden">
+                        <div
+                            class="p-5 border-b border-[#e5e7eb] dark:border-[#2a3848] flex justify-between items-center">
+                            <h3 class="font-bold text-lg text-[#111418] dark:text-white">Proposal Terbaru</h3>
+                            <a class="text-sm font-semibold text-primary hover:text-blue-700" href="#">Lihat Semua</a>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm">
+                                <thead class="bg-[#f8fafc] dark:bg-[#0f172a] text-[#637588] dark:text-[#94a3b8]">
+                                    <tr>
+                                        <th class="px-5 py-3 font-medium">Jenis Bantuan</th>
+                                        <th class="px-5 py-3 font-medium">Nama Sekolah</th>
+                                        <th class="px-5 py-3 font-medium">Kecamatan</th>
+                                        <th class="px-5 py-3 font-medium">Tanggal</th>
+                                        <th class="px-5 py-3 font-medium text-right">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-[#e5e7eb] dark:divide-[#2a3848]">
+                                    <tr class="hover:bg-[#f8fafc] dark:hover:bg-[#1e293b] transition-colors">
+                                        <td class="px-5 py-4 font-medium text-[#111418] dark:text-white">Renovasi Lab
+                                            Komputer</td>
+                                        <td class="px-5 py-4 text-[#637588] dark:text-[#94a3b8]">Ibu Siti Aminah</td>
+                                        <td class="px-5 py-4 text-[#637588] dark:text-[#94a3b8]">12 Okt 2023</td>
+                                        <td class="px-5 py-4">
+                                            <span
+                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400">Review</span>
+                                        </td>
+                                        <td class="px-5 py-4 text-right">
+                                            <button class="text-[#637588] hover:text-primary transition-colors">
+                                                <span class="material-symbols-outlined text-[20px]">visibility</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-[#f8fafc] dark:hover:bg-[#1e293b] transition-colors">
+                                        <td class="px-5 py-4 font-medium text-[#111418] dark:text-white">Pengadaan Buku
+                                            Perpus</td>
+                                        <td class="px-5 py-4 text-[#637588] dark:text-[#94a3b8]">Pak Joko Widodo</td>
+                                        <td class="px-5 py-4 text-[#637588] dark:text-[#94a3b8]">10 Okt 2023</td>
+                                        <td class="px-5 py-4">
+                                            <span
+                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">Disetujui</span>
+                                        </td>
+                                        <td class="px-5 py-4 text-right">
+                                            <button class="text-[#637588] hover:text-primary transition-colors">
+                                                <span class="material-symbols-outlined text-[20px]">visibility</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <!-- Additional Rows Omitted for Brevity -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Status & Notifications -->
+                    <div class="flex flex-col gap-6">
+                        <!-- Status Chart Card -->
+                        <div
+                            class="bg-white dark:bg-[#1a2634] p-5 rounded-xl border border-[#e5e7eb] dark:border-[#2a3848] shadow-sm flex flex-col items-center">
+                            <div class="w-full flex justify-between items-center mb-6">
+                                <h3 class="font-bold text-lg text-[#111418] dark:text-white">Status Bulan Ini</h3>
+                                <button class="text-[#637588]">
+                                    <span class="material-symbols-outlined">more_horiz</span>
+                                </button>
+                            </div>
+                            <!-- CSS Only Donut Chart -->
+                            <div
+                                class="relative size-48 conic-chart rounded-full flex items-center justify-center mb-6">
+                                <div
+                                    class="absolute inset-8 bg-white dark:bg-[#1a2634] rounded-full flex flex-col items-center justify-center">
+                                    <span class="text-3xl font-bold text-[#111418] dark:text-white">124</span>
+                                    <span class="text-xs text-[#637588]">Total</span>
+                                </div>
+                            </div>
+                            <!-- Legend -->
+                            <div class="w-full grid grid-cols-2 gap-3">
+                                <div class="flex items-center gap-2">
+                                    <div class="size-3 rounded-full bg-primary"></div>
+                                    <span class="text-sm text-[#637588] dark:text-[#94a3b8]">Baru (65%)</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="size-3 rounded-full bg-green-500"></div>
+                                    <span class="text-sm text-[#637588] dark:text-[#94a3b8]">Disetujui (20%)</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="size-3 rounded-full bg-orange-500"></div>
+                                    <span class="text-sm text-[#637588] dark:text-[#94a3b8]">Review (10%)</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="size-3 rounded-full bg-red-500"></div>
+                                    <span class="text-sm text-[#637588] dark:text-[#94a3b8]">Ditolak (5%)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notifications/Alerts -->
+                        <div
+                            class="bg-white dark:bg-[#1a2634] p-5 rounded-xl border border-[#e5e7eb] dark:border-[#2a3848] shadow-sm flex-1">
+                            <h3 class="font-bold text-lg text-[#111418] dark:text-white mb-4">Pemberitahuan</h3>
+                            <div class="flex flex-col gap-4">
+                                <div class="flex gap-3 items-start">
+                                    <div class="mt-1 size-2 rounded-full bg-red-500 shrink-0"></div>
+                                    <div>
+                                        <p class="text-sm font-medium text-[#111418] dark:text-white">Batas akhir
+                                            pengajuan RAPBS</p>
+                                        <p class="text-xs text-[#637588] mt-1">2 jam yang lalu</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-3 items-start">
+                                    <div class="mt-1 size-2 rounded-full bg-blue-500 shrink-0"></div>
+                                    <div>
+                                        <p class="text-sm font-medium text-[#111418] dark:text-white">Rapat evaluasi
+                                            bulanan</p>
+                                        <p class="text-xs text-[#637588] mt-1">Hari ini, 14:00 WIB</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-3 items-start">
+                                    <div class="mt-1 size-2 rounded-full bg-gray-300 shrink-0"></div>
+                                    <div>
+                                        <p class="text-sm font-medium text-[#111418] dark:text-white">Proposal "Lomba
+                                            Sains" disetujui</p>
+                                        <p class="text-xs text-[#637588] mt-1">Kemarin</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <button
+                                class="w-full mt-6 py-2 text-sm font-semibold text-primary border border-primary/20 rounded-lg hover:bg-primary/5 transition-colors">
+                                Lihat Semua Notifikasi
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- Modal Input Proposal -->
+    <div id="modalProposal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onclick="toggleModal(false)"></div>
+        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div
+                    class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                    <form id="formProposal">
+                        <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                            <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4" id="modal-title">Buat Proposal
+                                Baru</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Nama Sekolah</label>
+                                    <input type="text" id="namaSekolah" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Kecamatan</label>
+                                    <input type="text" id="kecamatan" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Jenis Permohonan
+                                        Bantuan</label>
+                                    <select id="jenisBantuan"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm">
+                                        <option value="RKB">RKB (Ruang Kelas Baru)</option>
+                                        <option value="Rehab">Rehab Ruang Kelas</option>
+                                        <option value="TIK">Peralatan TIK/Komputer</option>
+                                        <option value="Sanitasi">Sanitasi/Toilet</option>
+                                        <option value="Perpus">Perpustakaan</option>
+                                        <option value="Buku">Buku Pengayaan</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                            <button type="submit"
+                                class="inline-flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">Kirim</button>
+                            <button type="button" onclick="toggleModal(false)"
+                                class="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">Batal</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Logic -->
+    <script>
+        // URL API Google Apps Script (Pastikan ini benar)
+        const API_URL = "https://script.google.com/macros/s/AKfycbzxvd3NXMiJOT9TYoyGB8lvHIY4h64ABVGVvL-lAq_zegrZ3-vry4YLplYjDUSIf9SiDQ/exec";
+
+        // Logic Modal
+        function toggleModal(show) {
+            const modal = document.getElementById('modalProposal');
+            if (show) modal.classList.remove('hidden');
+            else modal.classList.add('hidden');
+        }
+
+        document.querySelector('button[onclick="toggleModal(false)"]').onclick = () => toggleModal(false);
+
+        // Handle Form Submit
+        document.getElementById('formProposal').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = e.submitter;
+            const originalText = btn.innerText;
+            btn.innerText = 'Mengirim...';
+            btn.disabled = true;
+
+            const payload = {
+                namaSekolah: document.getElementById('namaSekolah').value,
+                kecamatan: document.getElementById('kecamatan').value,
+                jenisBantuan: document.getElementById('jenisBantuan').value
+            };
+
+            fetch(API_URL + "?action=simpan", {
+                method: "POST",
+                body: JSON.stringify(payload)
+            })
+                .then(res => res.json())
+                .then(data => {
+                    alert("Berhasil: " + data.message);
+                    toggleModal(false);
+                    document.getElementById('formProposal').reset();
+                    fetchData(); // Refresh Data
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("Gagal koneksi: " + err);
+                })
+                .finally(() => {
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                });
+        });
+
+        // Fetch Data & Render Table
+        function fetchData() {
+            // Tampilkan loading state sederhana di tabel jika perlu
+            const tbody = document.querySelector('tbody');
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4">Memuat data...</td></tr>';
+
+            fetch(API_URL + "?action=baca")
+                .then(res => res.json())
+                .then(response => {
+                    if (response.status === 'success') {
+                        renderTable(response.data);
+                        calculateStats(response.data);
+                    }
+                })
+                .catch(err => console.error("Error fetching data:", err));
+        }
+
+        function renderTable(rows) {
+            // rows: [NO, TGL, NAMA, KECAMATAN, JENIS]
+            const tbody = document.querySelector('tbody');
+            tbody.innerHTML = '';
+
+            // Ambil 5 data terbaru (assuming rows are ordered by entry time)
+            // Reverse untuk paling baru di atas
+            let limitData = rows.slice().reverse().slice(0, 10);
+
+            limitData.forEach(r => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-[#f8fafc] dark:hover:bg-[#1e293b] transition-colors";
+
+                // Format Tanggal
+                let dateStr = r[1];
+                try {
+                    const d = new Date(r[1]);
+                    dateStr = d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+                } catch (e) { }
+
+                tr.innerHTML = `
+                    <td class="px-5 py-4 font-medium text-[#111418] dark:text-white">${r[4]}</td> <!-- Jenis -->
+                    <td class="px-5 py-4 text-[#637588] dark:text-[#94a3b8]">${r[2]}</td>      <!-- Sekolah -->
+                    <td class="px-5 py-4 text-[#637588] dark:text-[#94a3b8]">${r[3]}</td>      <!-- Kecamatan -->
+                    <td class="px-5 py-4 text-[#637588] dark:text-[#94a3b8]">${dateStr}</td>   <!-- Tanggal -->
+                    <td class="px-5 py-4 text-right">
+                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Baru</span>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function calculateStats(rows) {
+            // Update Total
+            const total = rows.length;
+            // Elemen stat (Hardcoded selector urutan 1)
+            // Note: Untuk project asli sebaiknya pakai ID unik
+            const statCards = document.querySelectorAll('.grid-cols-1 > div');
+
+            // Card 1: Total
+            if (statCards[0]) {
+                try {
+                    statCards[0].querySelector('.text-3xl').innerText = total;
+                    statCards[0].querySelector('.text-xs').innerText = "Data Terupdate";
+                } catch (ex) { }
+            }
+
+            // Chart Tengah
+            const centerChart = document.querySelector('.conic-chart span.text-3xl');
+            if (centerChart) centerChart.innerText = total;
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', fetchData);
+
+        // Sidebar Toggle Universal
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (window.innerWidth >= 768) {
+                sidebar.classList.toggle('hidden');
+            } else {
+                sidebar.classList.toggle('-translate-x-full');
+            }
+        }
+    </script>
+</body>
+
+</html>
