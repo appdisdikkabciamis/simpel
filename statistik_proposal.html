@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Statistik Proposal - SIMPEL</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-[#111418] dark:text-white overflow-hidden h-screen flex">
+
+    <!-- Sidebar -->
+    <aside id="sidebar"
+        class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-[#1a2634] flex flex-col h-full border-r border-[#e5e7eb] dark:border-[#2a3848] shrink-0 transition-transform duration-300 -translate-x-full md:translate-x-0 md:static">
+        <div class="h-auto py-6 flex flex-row items-center justify-center gap-3 px-6 shrink-0 relative">
+            <div class="size-10 rounded-full bg-primary flex items-center justify-center text-white shrink-0 shadow-md">
+                <span class="text-xl font-bold font-display">S</span>
+            </div>
+            <h1 class="text-2xl font-bold tracking-tight text-[#111418] dark:text-white">SIMPEL</h1>
+            <button onclick="document.getElementById('sidebar').classList.add('-translate-x-full')"
+                class="absolute right-4 top-4 md:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <nav class="flex-1 overflow-y-auto px-4 py-2 flex flex-col gap-2">
+            <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-[#637588] dark:text-[#94a3b8] hover:bg-[#f0f2f4] dark:hover:bg-[#2a3848] transition-colors group"
+                href="dashboard.html">
+                <span class="material-symbols-outlined group-hover:text-primary transition-colors">dashboard</span>
+                <span class="text-sm font-medium">Beranda</span>
+            </a>
+
+            <!-- Dropdown Menu Proposal -->
+            <div class="space-y-1">
+                <button
+                    onclick="document.getElementById('menuProposal').classList.toggle('hidden'); document.getElementById('arrowProposal').classList.toggle('rotate-180')"
+                    class="w-full flex items-center justify-between px-3 py-3 rounded-lg bg-[#f0f2f4] dark:bg-[#2a3848] text-[#111418] dark:text-white transition-colors group">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary">folder_shared</span>
+                        <span class="text-sm font-medium">Proposal</span>
+                    </div>
+                    <span id="arrowProposal"
+                        class="material-symbols-outlined text-lg transition-transform duration-200 rotate-180">expand_more</span>
+                </button>
+                <!-- Submenu (Expanded by default for active page) -->
+                <div id="menuProposal" class="pl-11 pr-3 space-y-1">
+                    <a class="block px-3 py-2 rounded-lg text-sm text-[#637588] dark:text-[#94a3b8] hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                        href="daftar_proposal.html">Daftar Proposal</a>
+                    <a class="block px-3 py-2 rounded-lg text-sm text-[#637588] dark:text-[#94a3b8] hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                        href="status_bantuan.html">Status Bantuan</a>
+                    <a class="block px-3 py-2 rounded-lg text-sm bg-primary text-white shadow-sm transition-colors"
+                        href="statistik_proposal.html">Statistik</a>
+                </div>
+            </div>
+
+            <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-[#637588] dark:text-[#94a3b8] hover:bg-[#f0f2f4] dark:hover:bg-[#2a3848] transition-colors group"
+                href="#">
+                <span class="material-symbols-outlined group-hover:text-primary transition-colors">analytics</span>
+                <span class="text-sm font-medium">Laporan</span>
+            </a>
+            <div class="h-px bg-[#e5e7eb] dark:bg-[#2a3848] my-2 mx-3"></div>
+            <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-[#637588] dark:text-[#94a3b8] hover:bg-[#f0f2f4] dark:hover:bg-[#2a3848] transition-colors group"
+                href="#">
+                <span class="material-symbols-outlined group-hover:text-primary transition-colors">settings</span>
+                <span class="text-sm font-medium">Pengaturan</span>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors group"
+                href="#" onclick="confirmLogout(event)">
+                <span class="material-symbols-outlined">logout</span>
+                <span class="text-sm font-medium">Keluar</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+        <header
+            class="h-16 bg-white dark:bg-[#1a2634] border-b border-[#e5e7eb] dark:border-[#2a3848] flex items-center justify-between px-6 shrink-0 z-10">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()"
+                    class="p-1 -ml-2 text-[#637588] hover:bg-gray-100 rounded-lg dark:text-[#94a3b8] dark:hover:bg-[#2a3848] transition-colors">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-sm font-semibold text-[#111418] dark:text-white">Administrator</span>
+                <div class="size-8 rounded-full bg-blue-100 flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined text-[20px]">person</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-auto px-4 md:px-8 pb-24 scroll-smooth relative">
+            <div class="mt-8 mb-6">
+                <h2 class="text-2xl font-bold text-[#111418] dark:text-white">Statistik Proposal</h2>
+            </div>
+
+            <!-- Stats Grid (Moved from Status Bantuan) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- Total Proposal -->
+                <div
+                    class="bg-white dark:bg-[#1a2634] p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col justify-between h-32 relative overflow-hidden group">
+                    <div class="flex items-center justify-between gap-4 relative z-10 h-full">
+                        <div class="flex flex-col justify-center">
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Proposal</p>
+                            <h3 class="text-3xl font-bold text-gray-900 dark:text-white mt-1" id="countTotal">-</h3>
+                        </div>
+                        <div
+                            class="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400 shrink-0 self-center">
+                            <span class="material-symbols-outlined text-3xl">folder</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Menerima Bantuan -->
+                <div
+                    class="bg-white dark:bg-[#1a2634] p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col justify-between h-32 relative overflow-hidden group">
+                    <div class="flex items-center justify-between gap-4 relative z-10 h-full">
+                        <div class="flex flex-col justify-center">
+                            <p
+                                class="text-sm font-medium text-gray-500 dark:text-gray-400 whitespace-normal leading-tight">
+                                Menerima<br>Bantuan</p>
+                            <h3 class="text-3xl font-bold text-green-600 dark:text-green-400 mt-1" id="countRealized">-
+                            </h3>
+                        </div>
+                        <div
+                            class="p-3 bg-green-50 dark:bg-green-900/30 rounded-lg text-green-600 dark:text-green-400 shrink-0 self-center">
+                            <span class="material-symbols-outlined text-3xl">check_circle</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Belum Menerima Bantuan -->
+                <div
+                    class="bg-white dark:bg-[#1a2634] p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col justify-between h-32 relative overflow-hidden group">
+                    <div class="flex items-center justify-between gap-4 relative z-10 h-full">
+                        <div class="flex flex-col justify-center">
+                            <p
+                                class="text-sm font-medium text-gray-500 dark:text-gray-400 whitespace-normal leading-tight">
+                                Belum Menerima<br>Bantuan</p>
+                            <h3 class="text-3xl font-bold text-orange-600 dark:text-orange-400 mt-1" id="countPending">-
+                            </h3>
+                        </div>
+                        <div
+                            class="p-3 bg-orange-50 dark:bg-orange-900/30 rounded-lg text-orange-600 dark:text-orange-400 shrink-0 self-center">
+                            <span class="material-symbols-outlined text-3xl">pending</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- Bar Chart: Proposal per Kecamatan -->
+                <div
+                    class="bg-white dark:bg-[#1a2634] p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+                    <h3 class="text-lg font-bold text-[#111418] dark:text-white mb-4">Jumlah Proposal per Kecamatan</h3>
+                    <div class="relative h-64 w-full">
+                        <canvas id="chartKecamatan"></canvas>
+                    </div>
+                </div>
+
+                <!-- Doughnut Chart: Status Bantuan -->
+                <div
+                    class="bg-white dark:bg-[#1a2634] p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+                    <h3 class="text-lg font-bold text-[#111418] dark:text-white mb-4">Status Penerimaan Bantuan</h3>
+                    <div class="relative h-64 w-full flex justify-center">
+                        <canvas id="chartStatus"></canvas>
+                    </div>
+                </div>
+
+                <!-- Bar Chart: Proposal per Jenis Bantuan -->
+                <div
+                    class="bg-white dark:bg-[#1a2634] p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm lg:col-span-2 flex flex-col items-start">
+                    <div class="w-full max-w-xl">
+                        <h3 class="text-lg font-bold text-[#111418] dark:text-white mb-4 text-left">Jumlah Proposal per
+                            Jenis Bantuan</h3>
+                        <div class="relative h-96 w-full">
+                            <canvas id="chartJenis"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading State Overlay -->
+            <div id="loadingOverlay"
+                class="absolute inset-x-0 top-0 bottom-0 bg-white/80 dark:bg-[#101922]/80 z-20 flex items-center justify-center">
+                <div class="flex flex-col items-center gap-3">
+                    <div class="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    <p class="text-sm text-gray-500 font-medium">Memuat data statistik...</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-5 right-5 z-[100] flex flex-col gap-3 pointer-events-none"></div>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbzxvd3NXMiJOT9TYoyGB8lvHIY4h64ABVGVvL-lAq_zegrZ3-vry4YLplYjDUSIf9SiDQ/exec";
+
+        // Global Charts
+        let chartKecamatanInstance = null;
+        let chartStatusInstance = null;
+        let chartJenisInstance = null;
+
+        // Data Store
+        let proposalData = [];
+        let bantuanDataMap = {};
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (window.innerWidth >= 768) {
+                sidebar.classList.toggle('hidden');
+            } else {
+                sidebar.classList.toggle('-translate-x-full');
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchData();
+        });
+
+        async function fetchData() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+
+            try {
+                const p1 = fetch(API_URL + "?action=baca").then(r => r.json());
+                const p2 = fetch(API_URL + "?action=get_data_bantuan").then(r => r.json());
+
+                const [resProp, resBan] = await Promise.all([p1, p2]);
+
+                if (resProp.status === 'success') {
+                    proposalData = resProp.data || [];
+                }
+
+                if (resBan.status === 'success') {
+                    const bantuanList = resBan.data || [];
+                    bantuanDataMap = {};
+                    bantuanList.forEach(item => {
+                        if (item.npsn) {
+                            bantuanDataMap[String(item.npsn).trim()] = true;
+                        }
+                    });
+                }
+
+                if (resProp.status === 'success') {
+                    renderDashboard();
+                } else {
+                    showToast("Gagal memuat data proposal", "error");
+                }
+
+            } catch (error) {
+                console.error(error);
+                showToast("Terjadi kesalahan koneksi", "error");
+            } finally {
+                loadingOverlay.classList.add('hidden');
+            }
+        }
+
+        function renderDashboard() {
+            // 1. Calculate Stats
+            let total = proposalData.length;
+            let realized = 0;
+
+            // Aggregation
+            let kecStats = {};
+            let jenisStats = {};
+
+            proposalData.forEach(row => {
+                const len = row.length;
+                let npsn = '', kec = '', jenis = '';
+                // Normalize
+                if (len >= 8) { npsn = row[3]; kec = row[5]; jenis = row[7]; }
+                else if (len >= 7) { npsn = row[3]; kec = row[5]; jenis = row[6]; } // Sometimes judul is last? No, if 7 cols: ID, TGLP, TGLD, NPSN, NAMA, KEC, JUDUL. No Jenis.
+                else if (len >= 6 && !isNaN(row[3])) { npsn = row[3]; kec = row[5]; }
+                else { kec = row[4]; } // Approx
+
+                // Count Realized
+                if (npsn && bantuanDataMap[String(npsn).trim()]) {
+                    realized++;
+                }
+
+                // Count Kecamatan
+                if (kec && kec.trim()) {
+                    const key = kec.trim();
+                    kecStats[key] = (kecStats[key] || 0) + 1;
+                }
+
+                // Count Jenis Bantuan
+                if (jenis && typeof jenis === 'string') {
+                    const list = jenis.split(',').map(s => s.trim()).filter(s => s);
+                    list.forEach(j => {
+                        const key = j;
+                        jenisStats[key] = (jenisStats[key] || 0) + 1;
+                    });
+                }
+            });
+
+            let pending = total - realized;
+
+            // Animate Cards
+            animateValue("countTotal", total, 800);
+            animateValue("countRealized", realized, 800);
+            animateValue("countPending", pending, 800);
+
+            // 2. Render Charts
+            renderChartKecamatan(kecStats);
+            renderChartStatus(realized, pending);
+            renderChartJenis(jenisStats);
+        }
+
+        // Helper to wrap text
+        function wrapLabel(str, maxLen = 45) {
+            if (str.length <= maxLen) return str;
+            const words = str.split(' ');
+            const lines = [];
+            let currentLine = words[0];
+
+            for (let i = 1; i < words.length; i++) {
+                if (currentLine.length + 1 + words[i].length <= maxLen) {
+                    currentLine += ' ' + words[i];
+                } else {
+                    lines.push(currentLine);
+                    currentLine = words[i];
+                }
+            }
+            lines.push(currentLine);
+            return lines;
+        }
+
+        function renderChartJenis(stats) {
+            const ctx = document.getElementById('chartJenis').getContext('2d');
+            const container = document.getElementById('chartJenis').parentNode;
+
+            // Sort by count desc
+            const sortedKeys = Object.keys(stats).sort((a, b) => stats[b] - stats[a]);
+            const data = sortedKeys.map(k => stats[k]);
+            // Multiline labels
+            const labels = sortedKeys.map(k => wrapLabel(k, 45));
+
+            // Dynamic Height: 25px per bar + 60px buffer (closer!)
+            const newHeight = Math.max(200, labels.length * 25 + 60);
+            container.style.height = `${newHeight}px`;
+
+            if (chartJenisInstance) chartJenisInstance.destroy();
+
+            const plugins = typeof ChartDataLabels !== 'undefined' ? [ChartDataLabels] : [];
+
+            chartJenisInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Jumlah Proposal',
+                        data: data,
+                        backgroundColor: '#8b5cf6', // Violet
+                        borderRadius: 4,
+                        barThickness: 'flex',
+                        maxBarThickness: 15,
+                        barPercentage: 1.0,  // Max width in category
+                        categoryPercentage: 1.0 // Max category width
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            enabled: true,
+                            callbacks: {
+                                title: function (context) {
+                                    const raw = context[0].label;
+                                    return Array.isArray(raw) ? raw.join(' ') : raw;
+                                }
+                            }
+                        },
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'end',
+                            color: '#64748b',
+                            font: { size: 10, weight: 'bold' },
+                            formatter: (value) => value
+                        }
+                    },
+                    scales: {
+                        x: { beginAtZero: true, ticks: { precision: 0 } },
+                        y: {
+                            ticks: {
+                                autoSkip: false,
+                                font: { size: 10 }
+                            }
+                        }
+                    }
+                },
+                plugins: plugins
+            });
+        }
+
+
+        function renderChartKecamatan(stats) {
+            const ctx = document.getElementById('chartKecamatan').getContext('2d');
+            const labels = Object.keys(stats).sort();
+            const data = labels.map(l => stats[l]);
+
+            if (chartKecamatanInstance) chartKecamatanInstance.destroy();
+
+            // Check for plugin
+            const plugins = typeof ChartDataLabels !== 'undefined' ? [ChartDataLabels] : [];
+
+            chartKecamatanInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Jumlah Proposal',
+                        data: data,
+                        backgroundColor: '#137fec',
+                        borderRadius: 4,
+                        barThickness: 'flex',
+                        maxBarThickness: 30
+                    }]
+                },
+                options: {
+                    indexAxis: 'y', // Horizontal
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return context.raw + ' Proposal';
+                                }
+                            }
+                        },
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'end',
+                            color: '#64748b',
+                            font: { size: 11, weight: 'bold' },
+                            formatter: (value) => value
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: { precision: 0 }
+                        },
+                        y: {
+                            ticks: {
+                                autoSkip: false,
+                                font: { size: 11 }
+                            }
+                        }
+                    }
+                },
+                plugins: plugins
+            });
+        }
+
+        function renderChartStatus(realized, pending) {
+            const ctx = document.getElementById('chartStatus').getContext('2d');
+
+            if (chartStatusInstance) chartStatusInstance.destroy();
+
+            const plugins = typeof ChartDataLabels !== 'undefined' ? [ChartDataLabels] : [];
+
+            chartStatusInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Belum Menerima', 'Menerima Bantuan'],
+                    datasets: [{
+                        data: [pending, realized],
+                        backgroundColor: ['#ea580c', '#16a34a'], // Orange-600, Green-600
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: 20
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20
+                            }
+                        },
+                        tooltip: { enabled: true },
+                        datalabels: {
+                            color: '#ffffff',
+                            font: { weight: 'bold', size: 12 },
+                            formatter: (value, ctx) => {
+                                let sum = 0;
+                                let dataArr = ctx.chart.data.datasets[0].data;
+                                dataArr.map(data => {
+                                    sum += data;
+                                });
+                                let percentage = (value * 100 / sum).toFixed(1) + "%";
+                                return `${value}\n(${percentage})`;
+                            },
+                            textAlign: 'center'
+                        }
+                    },
+                    cutout: '60%'
+                },
+                plugins: plugins
+            });
+        }
+
+        function animateValue(id, end, duration) {
+            const obj = document.getElementById(id);
+            if (!obj) return;
+            let start = 0;
+            if (end === 0) {
+                obj.innerHTML = "0";
+                return;
+            }
+            let range = end - start;
+            let current = start;
+            let increment = end > start ? 1 : -1;
+            let stepTime = Math.abs(Math.floor(duration / range));
+            if (stepTime < 10) {
+                stepTime = 10;
+                increment = Math.ceil(range / (duration / 10));
+            }
+            let timer = setInterval(function () {
+                current += increment;
+                if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+                    current = end;
+                    clearInterval(timer);
+                }
+                obj.innerHTML = current.toLocaleString();
+            }, stepTime);
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+
+            // Icon Helper
+            let iconBox = '';
+            if (type === 'success') iconBox = '<div class="inline-flex shrink-0 justify-center items-center w-8 h-8 text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-green-200"><span class="material-symbols-outlined text-xl">check_circle</span></div>';
+            else if (type === 'error') iconBox = '<div class="inline-flex shrink-0 justify-center items-center w-8 h-8 text-red-500 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200"><span class="material-symbols-outlined text-xl">error</span></div>';
+            else iconBox = '<div class="inline-flex shrink-0 justify-center items-center w-8 h-8 text-blue-500 bg-blue-100 rounded-lg dark:bg-blue-800 dark:text-blue-200"><span class="material-symbols-outlined text-xl">info</span></div>';
+
+            toast.className = `flex items-center w-full max-w-xs p-4 space-x-4 text-gray-500 bg-white divide-x divide-gray-200 rounded-lg shadow dark:text-gray-400 dark:divide-gray-700 dark:bg-gray-800 transition-all duration-300 transform translate-x-full opacity-0`;
+            toast.innerHTML = `
+                ${iconBox}
+                <div class="pl-4 text-sm font-normal">${message}</div>
+                <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700" onclick="this.parentElement.remove()">
+                    <span class="sr-only">Close</span>
+                    <span class="material-symbols-outlined text-lg">close</span>
+                </button>
+            `;
+
+            container.appendChild(toast);
+            requestAnimationFrame(() => toast.classList.remove('translate-x-full', 'opacity-0'));
+            setTimeout(() => { if (toast && toast.parentElement) toast.remove(); }, 3000);
+        }
+
+        function confirmLogout(e) {
+            e.preventDefault();
+            const yes = confirm("Apakah Anda yakin ingin keluar?");
+            if (yes) window.location.href = 'index.html';
+        }
+    </script>
+</body>
+
+</html>

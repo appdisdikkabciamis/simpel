@@ -13,6 +13,9 @@
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
         rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -60,11 +63,28 @@
                 <span class="text-sm font-medium">Beranda</span>
             </a>
             <!-- Removed Input Proposal Link -->
-            <a class="flex items-center gap-3 px-3 py-3 rounded-lg bg-primary text-white shadow-sm transition-colors"
-                href="daftar_proposal.html">
-                <span class="material-symbols-outlined">list_alt</span>
-                <span class="text-sm font-medium">Daftar Proposal</span>
-            </a>
+            <!-- Dropdown Menu Proposal -->
+            <div class="space-y-1">
+                <button
+                    onclick="document.getElementById('menuProposal').classList.toggle('hidden'); document.getElementById('arrowProposal').classList.toggle('rotate-180')"
+                    class="w-full flex items-center justify-between px-3 py-3 rounded-lg bg-[#f0f2f4] dark:bg-[#2a3848] text-[#111418] dark:text-white transition-colors group">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary">folder_shared</span>
+                        <span class="text-sm font-medium">Proposal</span>
+                    </div>
+                    <span id="arrowProposal"
+                        class="material-symbols-outlined text-lg transition-transform duration-200 rotate-180">expand_more</span>
+                </button>
+                <!-- Submenu (Expanded by default since active) -->
+                <div id="menuProposal" class="pl-11 pr-3 space-y-1">
+                    <a class="block px-3 py-2 rounded-lg text-sm bg-primary text-white shadow-sm transition-colors"
+                        href="daftar_proposal.html">Daftar Proposal</a>
+                    <a class="block px-3 py-2 rounded-lg text-sm text-[#637588] dark:text-[#94a3b8] hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                        href="status_bantuan.html">Status Bantuan</a>
+                    <a class="block px-3 py-2 rounded-lg text-sm text-[#637588] dark:text-[#94a3b8] hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                        href="statistik_proposal.html">Statistik</a>
+                </div>
+            </div>
             <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-[#637588] dark:text-[#94a3b8] hover:bg-[#f0f2f4] dark:hover:bg-[#2a3848] transition-colors group"
                 href="#">
                 <span class="material-symbols-outlined group-hover:text-primary transition-colors">analytics</span>
@@ -105,13 +125,26 @@
 
         <div class="flex-1 overflow-auto px-4 md:px-8 pb-24 scroll-smooth relative">
             <!-- Sub-Header: Title & Action -->
+            <!-- Sub-Header: Title & Action -->
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mt-4 md:mt-8 mb-6 shrink-0">
                 <h2 class="text-2xl font-bold text-[#111418] dark:text-white">Daftar Semua Proposal</h2>
-                <button onclick="toggleModal(true)"
-                    class="flex items-center gap-2 bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all shadow-md active:scale-95 w-full md:w-auto justify-center">
-                    <span class="material-symbols-outlined text-[18px]">add</span>
-                    Tambah Proposal
-                </button>
+                <div class="flex gap-3 w-full md:w-auto">
+                    <button onclick="exportExcel()"
+                        class="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all shadow-md active:scale-95 w-full md:w-auto justify-center">
+                        <span class="material-symbols-outlined text-[18px]">table_view</span>
+                        Excel
+                    </button>
+                    <button onclick="exportPDF()"
+                        class="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all shadow-md active:scale-95 w-full md:w-auto justify-center">
+                        <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
+                        PDF
+                    </button>
+                    <button onclick="toggleModal(true)"
+                        class="flex items-center gap-2 bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all shadow-md active:scale-95 w-full md:w-auto justify-center">
+                        <span class="material-symbols-outlined text-[18px]">add</span>
+                        Tambah Proposal
+                    </button>
+                </div>
             </div>
 
             <div
@@ -231,14 +264,44 @@
                         <thead
                             class="sticky top-0 z-10 bg-[#f8fafc] dark:bg-[#0f172a] text-[#637588] dark:text-[#94a3b8] shadow-sm outline outline-1 outline-[#e5e7eb] dark:outline-[#2a3848]">
                             <tr>
-                                <th class="px-5 py-3 font-medium">No</th>
-                                <th class="px-5 py-3 font-medium">Judul Proposal</th>
-                                <th class="px-5 py-3 font-medium">NPSN</th>
-                                <th class="px-5 py-3 font-medium">Nama Sekolah</th>
-                                <th class="px-5 py-3 font-medium">Kecamatan</th>
+                                <th class="px-5 py-3 font-medium cursor-pointer select-none group"
+                                    onclick="sortTable('no')">
+                                    <div class="flex items-center gap-1">No <span
+                                            class="material-symbols-outlined text-[16px] text-gray-400 group-hover:text-primary transition-colors sort-icon"
+                                            id="sort-no">unfold_more</span></div>
+                                </th>
+                                <th class="px-5 py-3 font-medium cursor-pointer select-none group"
+                                    onclick="sortTable('judul')">
+                                    <div class="flex items-center gap-1">Judul Proposal <span
+                                            class="material-symbols-outlined text-[16px] text-gray-400 group-hover:text-primary transition-colors sort-icon"
+                                            id="sort-judul">unfold_more</span></div>
+                                </th>
+                                <th class="px-5 py-3 font-medium cursor-pointer select-none group"
+                                    onclick="sortTable('npsn')">
+                                    <div class="flex items-center gap-1">NPSN <span
+                                            class="material-symbols-outlined text-[16px] text-gray-400 group-hover:text-primary transition-colors sort-icon"
+                                            id="sort-npsn">unfold_more</span></div>
+                                </th>
+                                <th class="px-5 py-3 font-medium cursor-pointer select-none group"
+                                    onclick="sortTable('nama')">
+                                    <div class="flex items-center gap-1">Nama Sekolah <span
+                                            class="material-symbols-outlined text-[16px] text-gray-400 group-hover:text-primary transition-colors sort-icon"
+                                            id="sort-nama">unfold_more</span></div>
+                                </th>
+                                <th class="px-5 py-3 font-medium cursor-pointer select-none group"
+                                    onclick="sortTable('kecamatan')">
+                                    <div class="flex items-center gap-1">Kecamatan <span
+                                            class="material-symbols-outlined text-[16px] text-gray-400 group-hover:text-primary transition-colors sort-icon"
+                                            id="sort-kecamatan">unfold_more</span></div>
+                                </th>
                                 <th class="px-5 py-3 font-medium hidden">Tanggal Proposal</th>
                                 <th class="px-5 py-3 font-medium hidden">Tanggal Diterima</th>
-                                <th class="px-5 py-3 font-medium">Jenis Bantuan</th>
+                                <th class="px-5 py-3 font-medium cursor-pointer select-none group"
+                                    onclick="sortTable('jenis')">
+                                    <div class="flex items-center gap-1">Jenis Bantuan <span
+                                            class="material-symbols-outlined text-[16px] text-gray-400 group-hover:text-primary transition-colors sort-icon"
+                                            id="sort-jenis">unfold_more</span></div>
+                                </th>
                                 <th class="px-5 py-3 font-medium text-right">Aksi</th>
                             </tr>
                         </thead>
@@ -363,8 +426,11 @@
         let allRows = []; // Store all data locally for search
         let filteredRows = []; // Data currently being displayed after search/filter
         let jenisBantuanList = []; // List of assistance types for auto-classification
+
         let currentPage = 1;
         let rowsPerPage = 10;
+
+        let currentSort = { col: 'no', dir: 'asc' }; // Default sort
 
 
         // Toggle Sidebar Responsive
@@ -644,97 +710,95 @@
                 });
         });
 
-        function fetchData() {
+        async function fetchData() {
             const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '<tr><td colspan="7" class="px-5 py-4 text-center">Sedang mengambil data terbaru...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="9" class="px-5 py-4 text-center">Sedang mengambil data terbaru...</td></tr>';
 
-            // Fetch Jenis Bantuan First/Parallel
-            const p1 = fetch(API_URL + "?action=baca").then(r => r.json());
-            const p2 = fetch(API_URL + "?action=get_jenis_bantuan").then(r => r.json());
+            try {
+                // 1. Fetch Jenis Bantuan (Non-Blocking / Soft Fail)
+                const pJenis = fetch(API_URL + "?action=get_jenis_bantuan")
+                    .then(r => r.json())
+                    .catch(e => {
+                        console.warn("Gagal load jenis bantuan:", e);
+                        return { status: 'error', data: [] }; // Fallback
+                    });
 
-            Promise.all([p1, p2])
-                .then(([response, jbResponse]) => {
-                    if (jbResponse.status === 'success') {
-                        const rawData = jbResponse.data || [];
-                        // Validate data format: Expecting flat list of strings.
-                        // If we get a 2D array (list of lists), it means the backend fell back to "Get All Data" (default action).
-                        if (Array.isArray(rawData) && rawData.length > 0 && Array.isArray(rawData[0])) {
-                            console.warn("Backend returned 2D array for 'get_jenis_bantuan'. Please redeploy Google Apps Script.");
-                            // Optional: Fallback or empty
-                            jenisBantuanList = [];
-                        } else {
-                            jenisBantuanList = rawData;
-                        }
+                // 2. Fetch Proposals (Critical)
+                const pProposals = fetch(API_URL + "?action=baca")
+                    .then(r => r.json());
 
-                        // Populate Checkboxes
-                        const container = document.getElementById('containerJenisBantuan');
-                        container.innerHTML = ''; // Clear loading
+                // Parallel Wait
+                const [resJenis, resProposals] = await Promise.all([pJenis, pProposals]);
 
-                        if (jenisBantuanList.length === 0) {
-                            container.innerHTML = '<p class="text-xs text-gray-500">Tidak ada data jenis bantuan.</p>';
-                        } else {
-                            jenisBantuanList.forEach(jb => {
-                                // Create wrapper
-                                const wrapper = document.createElement('label');
-                                wrapper.className = "flex items-center gap-2 cursor-pointer";
-
-                                const checkbox = document.createElement('input');
-                                checkbox.type = "checkbox";
-                                checkbox.value = jb;
-                                checkbox.className = "rounded border-gray-300 text-primary focus:ring-primary h-4 w-4";
-
-                                // Auto-clear search on click (User Request)
-                                checkbox.addEventListener('change', function () {
-                                    document.getElementById('searchJenisBantuan').value = '';
-                                    filterJenisBantuan('');
-                                });
-
-                                const label = document.createElement('span');
-                                label.className = "text-sm text-gray-700";
-                                label.textContent = jb;
-
-                                wrapper.appendChild(checkbox);
-                                wrapper.appendChild(label);
-                                container.appendChild(wrapper);
-                            });
-
-                            // Initial Filter (Hide all if no search/no check)
-                            filterJenisBantuan('');
-                        }
-
-                        // Populate Filter Dropdown
-                        const filterSelect = document.getElementById('filterJenisBantuan');
-                        // Save current selection if re-fetching
-                        const currentFilter = filterSelect.value;
-
-                        filterSelect.innerHTML = '<option value="">Semua Jenis Bantuan</option>';
-                        if (jenisBantuanList && jenisBantuanList.length > 0) {
-                            jenisBantuanList.forEach(jb => {
-                                const opt = document.createElement('option');
-                                opt.value = jb;
-                                opt.textContent = jb;
-                                filterSelect.appendChild(opt);
-                            });
-                        }
-                        if (currentFilter) filterSelect.value = currentFilter;
-                    }
-
-                    if (response.status === 'success') {
-                        // Reverse here strictly relative to original logic (newest text)
-                        allRows = response.data.slice().reverse();
-
-                        // Populate Filter Kecamatan
-                        populateKecamatanFilter();
-
-                        filterDataAndRender(); // Call the new filter function
+                // Process Jenis Bantuan
+                if (resJenis && resJenis.status === 'success') {
+                    const rawData = resJenis.data || [];
+                    if (Array.isArray(rawData) && rawData.length > 0 && Array.isArray(rawData[0])) {
+                        jenisBantuanList = [];
                     } else {
-                        tbody.innerHTML = '<tr><td colspan="7" class="px-5 py-4 text-center text-red-500">Gagal mengambil data</td></tr>';
+                        jenisBantuanList = rawData;
                     }
-                })
-                .catch(err => {
-                    console.error(err);
-                    tbody.innerHTML = '<tr><td colspan="7" class="px-5 py-4 text-center text-red-500">Terjadi kesalahan koneksi</td></tr>';
-                });
+
+                    // Populate Checkboxes
+                    const container = document.getElementById('containerJenisBantuan');
+                    container.innerHTML = '';
+                    if (jenisBantuanList.length === 0) {
+                        container.innerHTML = '<p class="text-xs text-gray-500">Tidak ada data jenis bantuan.</p>';
+                    } else {
+                        jenisBantuanList.forEach(jb => {
+                            const wrapper = document.createElement('label');
+                            wrapper.className = "flex items-center gap-2 cursor-pointer";
+                            const checkbox = document.createElement('input');
+                            checkbox.type = "checkbox";
+                            checkbox.value = jb;
+                            checkbox.className = "rounded border-gray-300 text-primary focus:ring-primary h-4 w-4";
+                            checkbox.addEventListener('change', function () {
+                                document.getElementById('searchJenisBantuan').value = '';
+                                filterJenisBantuan('');
+                            });
+                            const label = document.createElement('span');
+                            label.className = "text-sm text-gray-700";
+                            label.textContent = jb;
+                            wrapper.appendChild(checkbox);
+                            wrapper.appendChild(label);
+                            container.appendChild(wrapper);
+                        });
+                        filterJenisBantuan('');
+                    }
+
+                    // Populate Filter Dropdown
+                    const filterSelect = document.getElementById('filterJenisBantuan');
+                    const currentFilter = filterSelect.value;
+                    filterSelect.innerHTML = '<option value="">Semua Jenis Bantuan</option>';
+                    if (jenisBantuanList.length > 0) {
+                        jenisBantuanList.forEach(jb => {
+                            const opt = document.createElement('option');
+                            opt.value = jb;
+                            opt.textContent = jb;
+                            filterSelect.appendChild(opt);
+                        });
+                    }
+                    if (currentFilter) filterSelect.value = currentFilter;
+                }
+
+                // Process Proposals
+                if (resProposals.status === 'success') {
+                    allRows = resProposals.data.slice().reverse();
+                    populateKecamatanFilter();
+                    filterDataAndRender();
+                } else {
+                    throw new Error(resProposals.message || "Gagal mengambil data proposal");
+                }
+
+            } catch (err) {
+                console.error(err);
+                tbody.innerHTML = `<tr><td colspan="9" class="px-5 py-4 text-center text-red-500">
+                    <strong>Terjadi Kesalahan:</strong> ${err.message || 'Koneksi Gagal'}<br>
+                    <button onclick="fetchData()" class="mt-2 inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none">
+                        <span class="material-symbols-outlined text-[16px] mr-1">refresh</span> Coba Lagi
+                    </button>
+                </td></tr>`;
+            }
         }
 
         function populateKecamatanFilter() {
@@ -812,8 +876,69 @@
                 return matchesSearch && matchesKec && matchesJb;
             });
 
+            // Sorting Logic
+            if (currentSort.col && currentSort.col !== 'no') {
+                filteredRows.sort((a, b) => {
+                    // Helper Helper
+                    const getVal = (row, col) => {
+                        const len = row.length;
+                        // Normalize
+                        let npsn = '', nama = '', kec = '', judul = '', kategori = '';
+                        if (len >= 8) { npsn = row[3]; nama = row[4]; kec = row[5]; judul = row[6]; kategori = row[7]; }
+                        else if (len >= 7) { npsn = row[3]; nama = row[4]; kec = row[5]; judul = row[6]; }
+                        else { nama = row[3]; kec = row[4]; judul = row[5]; }
+
+                        switch (col) {
+                            case 'judul': return (judul || '').toLowerCase();
+                            case 'npsn': return String(npsn || '').trim();
+                            case 'nama': return (nama || '').toLowerCase();
+                            case 'kecamatan': return (kec || '').toLowerCase();
+                            case 'jenis': return (kategori || '').toLowerCase();
+                            default: return '';
+                        }
+                    };
+
+                    const valA = getVal(a, currentSort.col);
+                    const valB = getVal(b, currentSort.col);
+
+                    if (valA < valB) return currentSort.dir === 'asc' ? -1 : 1;
+                    if (valA > valB) return currentSort.dir === 'asc' ? 1 : -1;
+                    return 0;
+                });
+            } else if (currentSort.col === 'no' && currentSort.dir === 'desc') {
+                filteredRows.reverse();
+            }
+
             currentPage = 1;
             renderTable();
+            updateSortIcons();
+        }
+
+        function sortTable(col) {
+            if (currentSort.col === col) {
+                currentSort.dir = currentSort.dir === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.col = col;
+                currentSort.dir = 'asc';
+            }
+            filterDataAndRender();
+        }
+
+        function updateSortIcons() {
+            // Reset all
+            document.querySelectorAll('.sort-icon').forEach(el => {
+                el.innerText = 'unfold_more';
+                el.classList.remove('text-primary', 'font-bold');
+                el.classList.add('text-gray-400');
+            });
+
+            // Set active
+            const icon = document.getElementById('sort-' + currentSort.col);
+            if (icon) {
+                icon.innerText = currentSort.dir === 'asc' ? 'expand_less' : 'expand_more';
+                icon.classList.remove('text-gray-400');
+                icon.classList.add('text-primary', 'font-bold');
+            }
         }
 
         function renderTable() {
@@ -1273,6 +1398,114 @@
             setTimeout(() => {
                 if (toast.parentElement) toast.remove();
             }, 300);
+        }
+
+        // Helper for Date Formatting
+        function formatDate(dateStr) {
+            if (!dateStr) return "-";
+            const date = new Date(dateStr);
+            if (isNaN(date.getTime())) return dateStr; // Return original if parse fails
+            return date.toLocaleDateString('id-ID', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
+        }
+
+        function exportExcel() {
+            if (!filteredRows || filteredRows.length === 0) {
+                showToast("Tidak ada data untuk diexport", "info");
+                return;
+            }
+
+            if (typeof window.columnVisibility === 'undefined') {
+                window.columnVisibility = [true, true, true, true, true, true, true, true, true];
+            }
+
+            const columns = [
+                { header: "No", isVisible: window.columnVisibility[0], getter: (row, i) => i + 1 },
+                { header: "Judul Proposal", isVisible: window.columnVisibility[1], getter: (row) => row[6] || "-" },
+                { header: "NPSN", isVisible: window.columnVisibility[2], getter: (row) => row[3] || "-" },
+                { header: "Nama Sekolah", isVisible: window.columnVisibility[3], getter: (row) => row[4] || "-" },
+                { header: "Kecamatan", isVisible: window.columnVisibility[4], getter: (row) => row[5] || "-" },
+                { header: "Tanggal Proposal", isVisible: window.columnVisibility[5], getter: (row) => formatDate(row[1]) },
+                { header: "Tanggal Diterima", isVisible: window.columnVisibility[6], getter: (row) => formatDate(row[2]) },
+                { header: "Jenis Bantuan", isVisible: window.columnVisibility[7], getter: (row) => row[7] || "-" }
+            ];
+
+            const activeColumns = columns.filter(c => c.isVisible);
+
+            const dataToExport = filteredRows.map((row, index) => {
+                const rowObj = {};
+                activeColumns.forEach(col => {
+                    rowObj[col.header] = col.getter(row, index);
+                });
+                return rowObj;
+            });
+
+            const ws = XLSX.utils.json_to_sheet(dataToExport);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Daftar Proposal");
+            XLSX.writeFile(wb, "Daftar_Semua_Proposal.xlsx");
+        }
+
+        function exportPDF() {
+            if (!filteredRows || filteredRows.length === 0) {
+                showToast("Tidak ada data untuk diexport", "info");
+                return;
+            }
+
+            if (typeof window.columnVisibility === 'undefined') {
+                window.columnVisibility = [true, true, true, true, true, true, true, true, true];
+            }
+
+            const columns = [
+                { header: "No", isVisible: window.columnVisibility[0], getter: (row, i) => i + 1 },
+                { header: "Judul", isVisible: window.columnVisibility[1], getter: (row) => row[6] || "-" },
+                { header: "NPSN", isVisible: window.columnVisibility[2], getter: (row) => row[3] || "-" },
+                { header: "Sekolah", isVisible: window.columnVisibility[3], getter: (row) => row[4] || "-" },
+                { header: "Kecamatan", isVisible: window.columnVisibility[4], getter: (row) => row[5] || "-" },
+                { header: "Tgl Prop.", isVisible: window.columnVisibility[5], getter: (row) => formatDate(row[1]) },
+                { header: "Tgl Terima", isVisible: window.columnVisibility[6], getter: (row) => formatDate(row[2]) },
+                { header: "Jenis Bantuan", isVisible: window.columnVisibility[7], getter: (row) => row[7] || "-" }
+            ];
+
+            const activeColumns = columns.filter(c => c.isVisible);
+            const head = [activeColumns.map(c => c.header)];
+            const body = filteredRows.map((row, index) => {
+                return activeColumns.map(col => col.getter(row, index));
+            });
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('l', 'mm', 'a4');
+
+            doc.setFontSize(14);
+            doc.text("Daftar Semua Proposal", 14, 15);
+            doc.setFontSize(10);
+            const dateStr = new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+            doc.text(`Tanggal Export: ${dateStr}`, 14, 22);
+
+            // Dynamic Column Styles
+            const columnStyles = {};
+            activeColumns.forEach((col, index) => {
+                if (col.header === 'Sekolah') columnStyles[index] = { cellWidth: 35 };
+                if (col.header === 'Judul') columnStyles[index] = { cellWidth: 70 };
+                if (col.header === 'Jenis Bantuan') columnStyles[index] = { cellWidth: 60 }; // Increased from 40 to 60
+                if (col.header === 'Tgl Prop.' || col.header === 'Tgl Terima') columnStyles[index] = { cellWidth: 28 };
+            });
+
+            doc.autoTable({
+                head: head,
+                body: body,
+                startY: 25,
+                styles: { fontSize: 8 },
+                headStyles: { fillColor: [19, 127, 236] },
+                alternateRowStyles: { fillColor: [240, 242, 244] },
+                margin: { top: 25 },
+                columnStyles: columnStyles
+            });
+
+            doc.save("Daftar_Semua_Proposal.pdf");
         }
     </script>
 </body>

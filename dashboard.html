@@ -98,11 +98,29 @@
             </a>
             <!-- Inactive Items -->
 
-            <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-[#637588] dark:text-[#94a3b8] hover:bg-[#f0f2f4] dark:hover:bg-[#2a3848] transition-colors group"
-                href="daftar_proposal.html">
-                <span class="material-symbols-outlined group-hover:text-primary transition-colors">list_alt</span>
-                <span class="text-sm font-medium">Daftar Proposal</span>
-            </a>
+            <!-- Dropdown Menu Proposal -->
+            <div class="space-y-1">
+                <button
+                    onclick="document.getElementById('menuProposal').classList.toggle('hidden'); document.getElementById('arrowProposal').classList.toggle('rotate-180')"
+                    class="w-full flex items-center justify-between px-3 py-3 rounded-lg text-[#637588] dark:text-[#94a3b8] hover:bg-[#f0f2f4] dark:hover:bg-[#2a3848] transition-colors group">
+                    <div class="flex items-center gap-3">
+                        <span
+                            class="material-symbols-outlined group-hover:text-primary transition-colors">folder_shared</span>
+                        <span class="text-sm font-medium">Proposal</span>
+                    </div>
+                    <span id="arrowProposal"
+                        class="material-symbols-outlined text-lg transition-transform duration-200">expand_more</span>
+                </button>
+                <!-- Submenu (Collapsed by default on Dashboard) -->
+                <div id="menuProposal" class="hidden pl-11 pr-3 space-y-1">
+                    <a class="block px-3 py-2 rounded-lg text-sm text-[#637588] dark:text-[#94a3b8] hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                        href="daftar_proposal.html">Daftar Proposal</a>
+                    <a class="block px-3 py-2 rounded-lg text-sm text-[#637588] dark:text-[#94a3b8] hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                        href="status_bantuan.html">Status Bantuan</a>
+                    <a class="block px-3 py-2 rounded-lg text-sm text-[#637588] dark:text-[#94a3b8] hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                        href="statistik_proposal.html">Statistik</a>
+                </div>
+            </div>
             <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-[#637588] dark:text-[#94a3b8] hover:bg-[#f0f2f4] dark:hover:bg-[#2a3848] transition-colors group"
                 href="#">
                 <span class="material-symbols-outlined group-hover:text-primary transition-colors">analytics</span>

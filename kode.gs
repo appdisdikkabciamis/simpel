@@ -219,7 +219,63 @@ function handleRequest(e) {
           }
        }
        
+       
        return responseJSON({ status: 'success', data: list.sort() });
+
+    } else if (action == "get_data_bantuan") {
+      var ss = SpreadsheetApp.getActiveSpreadsheet();
+      var sheet = ss.getSheetByName('Bantuan');
+      
+      if (!sheet) {
+        return responseJSON({ status: 'failed', message: 'Sheet Bantuan tidak ditemukan' });
+      }
+      
+      // Get all data
+      var values = sheet.getDataRange().getDisplayValues();
+      if (values.length < 2) return responseJSON({ status: 'success', data: [] });
+      
+      var header = values[0];
+      
+      // Dynamic Column Finding
+      // Need: Sumber Dana, NPSN, Nama, Kecamatan, Kegiatan
+      // Mapping:
+      // Sumber Dana - check 'Sumber Dana', 'Dana'
+      // NPSN - 'NPSN'
+      // Kegiatan - 'Kegiatan'
+      
+      var colSumber = -1, colNpsn = -1, colKegiatan = -1;
+      
+      for(var i=0; i<header.length; i++) {
+        var h = String(header[i]).toLowerCase();
+        if (h.includes('sumber') && h.includes('dana')) colSumber = i;
+        else if (h === 'npsn') colNpsn = i;
+        else if (h === 'kegiatan') colKegiatan = i;
+      }
+      
+      // Fallbacks
+      if (colSumber === -1) colSumber = 0; // Assume first? Or specific index if fixed structure known
+      // User said: [Sumber Dana, NPSN, Nama Sekolah, Kecamatan, Kegiatan]
+      // Indices:        0         1          2             3         4
+      if (colNpsn === -1) colNpsn = 1;
+      
+      var result = [];
+      for(var i=1; i<values.length; i++) {
+        // Return object or array? Array is lighter.
+        // [NPSN, Sumber Dana, Kegiatan]
+        var npsn = values[i][colNpsn];
+        var sumber = (colSumber !== -1) ? values[i][colSumber] : "";
+        var kegiatan = (colKegiatan !== -1) ? values[i][colKegiatan] : "";
+        
+        if (npsn) {
+           result.push({
+             npsn: String(npsn).trim(),
+             sumberDana: sumber,
+             kegiatan: kegiatan
+           });
+        }
+      }
+      
+      return responseJSON({ status: 'success', data: result });
 
     } else {
       // Default: Ambil Data
