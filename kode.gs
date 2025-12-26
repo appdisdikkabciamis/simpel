@@ -68,7 +68,7 @@ function handleRequest(e) {
       var ss = SpreadsheetApp.getActiveSpreadsheet();
       var sheet = ss.getSheetByName('Proposal');
       
-      // ID-less Structure: [TGLP, TGLD, NPSN, NAMA, KEC, JUDUL]
+      // ID-less Structure: [TGLP, TGLD, NPSN, NAMA, KEC, JUDUL, KATEGORI]
       // We do NOT prepend ID.
       sheet.appendRow([
         data.tanggal,    // Col A: TGL PROPOSAL
@@ -76,7 +76,8 @@ function handleRequest(e) {
         data.npsn || "",  // Col C: NPSN
         data.namaSekolah, // Col D: NAMA SEKOLAH
         data.kecamatan,   // Col E: KECAMATAN
-        data.jenisBantuan // Col F: JUDUL PROPOSAL
+        data.judulProposal, // Col F: JUDUL PROPOSAL (Was jenisBantuan)
+        data.kategoriBantuan || "" // Col G: JENIS BANTUAN (New Manual Input)
       ]);
       
       return responseJSON({ status: 'success', message: 'Data Tersimpan' });
@@ -91,15 +92,16 @@ function handleRequest(e) {
       var lastRow = sheet.getLastRow();
       
       if (rowIndex >= 2 && rowIndex <= lastRow) {
-        // Update Columns A, B, C, D, E, F (Indices 1, 2, 3, 4, 5, 6)
-        // [TGLP, TGLD, NPSN, NAMA, KEC, JUDUL]
+        // Update Columns A, B, C, D, E, F, G (Indices 1 to 7)
+        // [TGLP, TGLD, NPSN, NAMA, KEC, JUDUL, KATEGORI]
         
-        sheet.getRange(rowIndex, 1).setValue(data.tanggal);     // Col A: TGLP
-        sheet.getRange(rowIndex, 2).setValue(data.tanggalDiterima); // Col B: TGLD
-        sheet.getRange(rowIndex, 3).setValue(data.npsn);        // Col C: NPSN
-        sheet.getRange(rowIndex, 4).setValue(data.namaSekolah); // Col D: NAMA
-        sheet.getRange(rowIndex, 5).setValue(data.kecamatan);   // Col E: KEC
-        sheet.getRange(rowIndex, 6).setValue(data.jenisBantuan); // Col F: JUDUL
+        sheet.getRange(rowIndex, 1).setValue(data.tanggal);     // Col A
+        sheet.getRange(rowIndex, 2).setValue(data.tanggalDiterima); // Col B
+        sheet.getRange(rowIndex, 3).setValue(data.npsn);        // Col C
+        sheet.getRange(rowIndex, 4).setValue(data.namaSekolah); // Col D
+        sheet.getRange(rowIndex, 5).setValue(data.kecamatan);   // Col E
+        sheet.getRange(rowIndex, 6).setValue(data.judulProposal); // Col F
+        sheet.getRange(rowIndex, 7).setValue(data.kategoriBantuan); // Col G
         
         return responseJSON({ status: 'success', message: 'Data Diperbarui' });
       } else {
@@ -175,6 +177,49 @@ function handleRequest(e) {
        } else {
          return responseJSON({ status: 'not_found', message: 'NPSN tidak ditemukan' });
        }
+
+    } else if (action == "get_jenis_bantuan") {
+       var ss = SpreadsheetApp.getActiveSpreadsheet();
+       // Try 'Jenis Bantuan' or 'Data Jenis Bantuan' or similar if exact name not guaranteed, but requirement said "Jenis Bantuan"
+       var sheet = ss.getSheetByName('Jenis Bantuan');
+       
+       if (!sheet) {
+          // Fallback if sheet not created yet, return empty list or specific error
+          return responseJSON({ status: 'failed', message: 'Sheet Jenis Bantuan tidak ditemukan' });
+       }
+       
+       var values = sheet.getDataRange().getValues();
+       if (values.length < 2) return responseJSON({ status: 'success', data: [] }); // Header only or empty
+       
+       var header = values[0];
+       var colIdx = -1;
+       
+       // Find "Jenis Bantuan" column
+       for(var i=0; i<header.length; i++) {
+          if (String(header[i]).toLowerCase().includes('jenis bantuan')) {
+             colIdx = i;
+             break;
+          }
+       }
+       
+       // Default to first column if not found explicitly but sheet exists (common convention)
+       if (colIdx === -1) colIdx = 0;
+       
+       var uniqueTypes = {};
+       var list = [];
+       
+       for(var i=1; i<values.length; i++) {
+          var val = values[i][colIdx];
+          if (val && String(val).trim() !== '') {
+             var v = String(val).trim();
+             if (!uniqueTypes[v]) {
+                uniqueTypes[v] = true;
+                list.push(v);
+             }
+          }
+       }
+       
+       return responseJSON({ status: 'success', data: list.sort() });
 
     } else {
       // Default: Ambil Data

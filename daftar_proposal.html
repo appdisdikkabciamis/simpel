@@ -141,6 +141,12 @@
                             <option value="">Semua Kecamatan</option>
                         </select>
 
+                        <!-- Filter Jenis Bantuan -->
+                        <select id="filterJenisBantuan"
+                            class="border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded-lg text-sm focus:ring-primary focus:border-primary transition-all shadow-sm max-w-[200px] truncate">
+                            <option value="">Semua Jenis Bantuan</option>
+                        </select>
+
                         <!-- Column Visibility Toggle -->
                         <div class="relative">
                             <button onclick="document.getElementById('columnMenu').classList.toggle('hidden')"
@@ -197,6 +203,12 @@
                                     class="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg cursor-pointer">
                                     <input type="checkbox" checked onclick="toggleColumn(7)"
                                         class="rounded border-gray-300 text-primary focus:ring-primary">
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">Jenis Bantuan</span>
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg cursor-pointer">
+                                    <input type="checkbox" checked onclick="toggleColumn(8)"
+                                        class="rounded border-gray-300 text-primary focus:ring-primary">
                                     <span class="text-sm text-gray-700 dark:text-gray-300">Aksi</span>
                                 </label>
                             </div>
@@ -226,6 +238,7 @@
                                 <th class="px-5 py-3 font-medium">Kecamatan</th>
                                 <th class="px-5 py-3 font-medium hidden">Tanggal Proposal</th>
                                 <th class="px-5 py-3 font-medium hidden">Tanggal Diterima</th>
+                                <th class="px-5 py-3 font-medium">Jenis Bantuan</th>
                                 <th class="px-5 py-3 font-medium text-right">Aksi</th>
                             </tr>
                         </thead>
@@ -284,6 +297,11 @@
                                         <input type="text" id="kecamatan" disabled
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm bg-gray-100 cursor-not-allowed">
                                     </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">Judul Proposal</label>
+                                        <textarea id="judulProposal" rows="2"
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"></textarea>
+                                    </div>
                                 </div>
 
                                 <!-- Col 2 -->
@@ -298,14 +316,27 @@
                                         <input type="text" id="namaSekolah" disabled
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm bg-gray-100 cursor-not-allowed">
                                     </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Jenis
+                                            Bantuan</label>
+                                        <input type="text" id="searchJenisBantuan"
+                                            placeholder="Ketik untuk mencari bantuan..."
+                                            class="mt-1 mb-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm">
+                                        <!-- Container, default hidden or empty look? We handle via JS visibility -->
+                                        <div id="containerJenisBantuan"
+                                            class="grid grid-cols-1 gap-2 max-h-40 overflow-y-auto p-2 border border-gray-300 rounded-md bg-white min-h-[50px]">
+                                            <p id="jbInfoText" class="text-xs text-gray-400 italic">Ketik di atas untuk
+                                                menampilkan pilihan...</p>
+                                        </div>
+                                        <input type="text" id="customJenisBantuan"
+                                            placeholder="Lainnya / Tambahan (Opsional)..."
+                                            class="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm">
+                                    </div>
                                 </div>
 
                                 <!-- Full Width -->
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium text-gray-700">Judul Proposal</label>
-                                    <textarea id="jenisBantuan" rows="3"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"></textarea>
-                                </div>
+                                <!-- Full Width -->
+                                <!-- Full Width removed, moved to Col 1 -->
                                 <input type="hidden" id="proposalId">
                             </div>
                         </div>
@@ -326,11 +357,12 @@
 
     <script>
         // Global state to persist column visibility across renders
-        // Indices: 0=No, 1=Judul, 2=NPSN, 3=Nama, 4=Kecamatan, 5=TglProp, 6=TglRec, 7=Aksi
-        window.columnVisibility = [true, true, true, true, true, false, false, true];
+        // Indices: 0=No, 1=Judul, 2=NPSN, 3=Nama, 4=Kecamatan, 5=TglProp, 6=TglRec, 7=JenisBantuan, 8=Aksi
+        window.columnVisibility = [true, true, true, true, true, false, false, true, true];
         const API_URL = "https://script.google.com/macros/s/AKfycbzxvd3NXMiJOT9TYoyGB8lvHIY4h64ABVGVvL-lAq_zegrZ3-vry4YLplYjDUSIf9SiDQ/exec";
         let allRows = []; // Store all data locally for search
         let filteredRows = []; // Data currently being displayed after search/filter
+        let jenisBantuanList = []; // List of assistance types for auto-classification
         let currentPage = 1;
         let rowsPerPage = 10;
 
@@ -380,7 +412,6 @@
             const data = JSON.parse(decodeURIComponent(encodedData));
             // Ensure we are working with normalized 8-col structure or use dynamic finding
             // Since we pass the RAW row from renderTable, we should rely on dynamic finding based on length OR normalized data passed from renderTable.
-            // renderTable NOW normalizes data. So we can expect a consistent structure if we use the normalized row.
             // My renderTable update below will normalize to 8 columns. [ID, ?, ?, TGLP, TGLD, NAMA, KEC, JUDUL]
 
             document.getElementById('proposalId').value = data[0];
@@ -428,25 +459,65 @@
             }
             document.getElementById('tanggalDiterima').value = tglRec;
 
-            // Updated Mapping for 6-Column Sheet (Index 0 is ID)
-            // Data: [ID, TGLP, TGLD, NPSN, NAMA, KEC, JUDUL]
-            // Indices: 0,   1,    2,    3,    4,    5,     6
+            // Updated Mapping for 7-Column Sheet (Index 0 is ID)
+            // Data: [ID, TGLP, TGLD, NPSN, NAMA, KEC, JUDUL, KATEGORI]
+            // Indices: 0,   1,    2,    3,    4,    5,     6,      7
 
             // Fallback for legacy (check length)
             if (len >= 7) {
                 document.getElementById('npsn').value = data[3] || '';
                 document.getElementById('namaSekolah').value = data[4] || '';
                 document.getElementById('kecamatan').value = data[5] || '';
-                document.getElementById('jenisBantuan').value = data[6] || '';
+                document.getElementById('judulProposal').value = data[6] || '';
+
+                // Populating Multi-Select Checkboxes and Custom Input
+                const existingCats = (data[7] || '').split(',').map(s => s.trim());
+
+                // Track matches to identify custom values
+                const standardValues = [];
+                const checkboxes = document.querySelectorAll('#containerJenisBantuan input[type="checkbox"]');
+                checkboxes.forEach(cb => {
+                    const cbVal = cb.value;
+                    const isChecked = existingCats.some(ec => ec.toLowerCase() === cbVal.toLowerCase());
+                    cb.checked = isChecked;
+                    if (isChecked) standardValues.push(cbVal.toLowerCase());
+                });
+
+                // Identify custom values (not in checkboxes)
+                const customValues = existingCats.filter(ec => ec && !standardValues.includes(ec.toLowerCase()));
+                document.getElementById('customJenisBantuan').value = customValues.join(', ');
+
+                // Refresh Visibility: Show only checked ones initially if search is empty
+                filterJenisBantuan('');
+
             } else {
-                // Try legacy fallback or heuristic
-                // Assuming legacy didn't have NPSN, skip it?
-                document.getElementById('npsn').value = '';
-                // ... keep existing logic if needed or just rely on new structure 
-                // For now, let's assume the user is migrating or creating new data mostly.
-                document.getElementById('namaSekolah').value = data[len - 3] || '';
-                document.getElementById('kecamatan').value = data[len - 2] || '';
-                document.getElementById('jenisBantuan').value = data[len - 1] || '';
+                // Try legacy fallback or heuristic for older data
+                // [ID, TGLP, TGLD, NAMA, KEC, JUDUL] (Legacy 6-col)
+                // or [ID, TGLP, TGLD, NPSN, NAMA, KEC, JUDUL] (Legacy 7-col without KATEGORI)
+
+                // Assuming "Judul" is always last or second to last... 
+                // Let's rely on normalized indices from render logic if possible or simple heuristics
+
+                // Simple heuristic: 
+                // if npsn (idx 3) looks like number, use it.
+                // map "last" to title.
+
+                if (data[3] && !isNaN(data[3])) { // Has NPSN
+                    document.getElementById('npsn').value = data[3];
+                    document.getElementById('namaSekolah').value = data[4];
+                    document.getElementById('kecamatan').value = data[5];
+                    document.getElementById('judulProposal').value = data[6];
+                } else {
+                    // Older
+                    document.getElementById('namaSekolah').value = data[3]; // Approx
+                    document.getElementById('kecamatan').value = data[4];
+                    document.getElementById('judulProposal').value = data[5];
+                }
+                // Clear checkboxes and custom input
+                document.querySelectorAll('#containerJenisBantuan input[type="checkbox"]').forEach(cb => cb.checked = false);
+                document.getElementById('customJenisBantuan').value = '';
+                // Reset Visibility
+                filterJenisBantuan('');
             }
 
             document.getElementById('modal-title').innerText = "Edit Proposal";
@@ -501,7 +572,23 @@
             const npsnVal = document.getElementById('npsn').value.trim();
             const namaSekolahVal = document.getElementById('namaSekolah').value;
             const kecamatanVal = document.getElementById('kecamatan').value;
-            const judulVal = document.getElementById('jenisBantuan').value.trim();
+            const judulVal = document.getElementById('judulProposal').value.trim();
+
+            // Collect Checkboxes and Custom Input
+            const checkedBoxes = document.querySelectorAll('#containerJenisBantuan input[type="checkbox"]:checked');
+            let selectedList = Array.from(checkedBoxes).map(cb => cb.value);
+
+            const customVal = document.getElementById('customJenisBantuan').value.trim();
+            if (customVal) {
+                // Split custom by comma in case user typed multiple manually "A, B"
+                const customs = customVal.split(',').map(s => s.trim()).filter(s => s);
+                selectedList = selectedList.concat(customs);
+            }
+
+            // Deduplicate (case sensitive or insensitive? Keeping raw is safer but unique logic might be good)
+            const uniqueList = [...new Set(selectedList)];
+            const selectedCategories = uniqueList.join(', ');
+
             const tglVal = document.getElementById('tanggal').value;
 
             if (!npsnVal || !tglVal || !judulVal) {
@@ -527,7 +614,8 @@
                 npsn: npsnVal,
                 namaSekolah: namaSekolahVal,
                 kecamatan: kecamatanVal,
-                jenisBantuan: judulVal
+                judulProposal: judulVal,
+                kategoriBantuan: selectedCategories
             };
 
             const action = id ? "update" : "simpan";
@@ -538,9 +626,13 @@
             })
                 .then(res => res.json())
                 .then(data => {
-                    showToast("Berhasil: " + data.message, 'success');
-                    toggleModal(false);
-                    fetchData(); // Refresh Data
+                    if (data.status === 'success') {
+                        showToast(data.message || "Berhasil menyimpan", 'success');
+                        toggleModal(false);
+                        fetchData(); // Refresh Data
+                    } else {
+                        throw new Error(data.message || "Gagal menyimpan");
+                    }
                 })
                 .catch(err => {
                     console.error(err);
@@ -554,35 +646,94 @@
 
         function fetchData() {
             const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '<tr><td colspan="6" class="px-5 py-4 text-center">Sedang mengambil data terbaru...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" class="px-5 py-4 text-center">Sedang mengambil data terbaru...</td></tr>';
 
-            fetch(API_URL + "?action=baca")
-                .then(res => res.json())
-                .then(response => {
+            // Fetch Jenis Bantuan First/Parallel
+            const p1 = fetch(API_URL + "?action=baca").then(r => r.json());
+            const p2 = fetch(API_URL + "?action=get_jenis_bantuan").then(r => r.json());
+
+            Promise.all([p1, p2])
+                .then(([response, jbResponse]) => {
+                    if (jbResponse.status === 'success') {
+                        const rawData = jbResponse.data || [];
+                        // Validate data format: Expecting flat list of strings.
+                        // If we get a 2D array (list of lists), it means the backend fell back to "Get All Data" (default action).
+                        if (Array.isArray(rawData) && rawData.length > 0 && Array.isArray(rawData[0])) {
+                            console.warn("Backend returned 2D array for 'get_jenis_bantuan'. Please redeploy Google Apps Script.");
+                            // Optional: Fallback or empty
+                            jenisBantuanList = [];
+                        } else {
+                            jenisBantuanList = rawData;
+                        }
+
+                        // Populate Checkboxes
+                        const container = document.getElementById('containerJenisBantuan');
+                        container.innerHTML = ''; // Clear loading
+
+                        if (jenisBantuanList.length === 0) {
+                            container.innerHTML = '<p class="text-xs text-gray-500">Tidak ada data jenis bantuan.</p>';
+                        } else {
+                            jenisBantuanList.forEach(jb => {
+                                // Create wrapper
+                                const wrapper = document.createElement('label');
+                                wrapper.className = "flex items-center gap-2 cursor-pointer";
+
+                                const checkbox = document.createElement('input');
+                                checkbox.type = "checkbox";
+                                checkbox.value = jb;
+                                checkbox.className = "rounded border-gray-300 text-primary focus:ring-primary h-4 w-4";
+
+                                // Auto-clear search on click (User Request)
+                                checkbox.addEventListener('change', function () {
+                                    document.getElementById('searchJenisBantuan').value = '';
+                                    filterJenisBantuan('');
+                                });
+
+                                const label = document.createElement('span');
+                                label.className = "text-sm text-gray-700";
+                                label.textContent = jb;
+
+                                wrapper.appendChild(checkbox);
+                                wrapper.appendChild(label);
+                                container.appendChild(wrapper);
+                            });
+
+                            // Initial Filter (Hide all if no search/no check)
+                            filterJenisBantuan('');
+                        }
+
+                        // Populate Filter Dropdown
+                        const filterSelect = document.getElementById('filterJenisBantuan');
+                        // Save current selection if re-fetching
+                        const currentFilter = filterSelect.value;
+
+                        filterSelect.innerHTML = '<option value="">Semua Jenis Bantuan</option>';
+                        if (jenisBantuanList && jenisBantuanList.length > 0) {
+                            jenisBantuanList.forEach(jb => {
+                                const opt = document.createElement('option');
+                                opt.value = jb;
+                                opt.textContent = jb;
+                                filterSelect.appendChild(opt);
+                            });
+                        }
+                        if (currentFilter) filterSelect.value = currentFilter;
+                    }
+
                     if (response.status === 'success') {
                         // Reverse here strictly relative to original logic (newest text)
-                        // Actually better to reverse in render or just here once.
-                        // Let's reverse here once.
-                        // Let's reverse here once.
                         allRows = response.data.slice().reverse();
-
-                        // DEBUG: Show first row structure
-                        if (allRows.length > 0) {
-                            console.log("DEBUG RAW ROW:", allRows[0]);
-                            // alert("DEBUG ROW 1: " + JSON.stringify(allRows[0])); 
-                        }
 
                         // Populate Filter Kecamatan
                         populateKecamatanFilter();
 
-                        applyFilters();
+                        filterDataAndRender(); // Call the new filter function
                     } else {
-                        tbody.innerHTML = '<tr><td colspan="6" class="px-5 py-4 text-center text-red-500">Gagal mengambil data</td></tr>';
+                        tbody.innerHTML = '<tr><td colspan="7" class="px-5 py-4 text-center text-red-500">Gagal mengambil data</td></tr>';
                     }
                 })
                 .catch(err => {
                     console.error(err);
-                    tbody.innerHTML = '<tr><td colspan="6" class="px-5 py-4 text-center text-red-500">Terjadi kesalahan koneksi</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="7" class="px-5 py-4 text-center text-red-500">Terjadi kesalahan koneksi</td></tr>';
                 });
         }
 
@@ -631,31 +782,34 @@
             }
         }
 
-        function applyFilters() {
-            const keyword = document.getElementById('searchInput').value.toLowerCase();
+        function filterDataAndRender() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const filterKec = document.getElementById('filterKecamatan').value;
+            const filterJb = document.getElementById('filterJenisBantuan').value;
 
-            filteredRows = allRows.filter(row => {
-                // Normalize to get fields
-                const len = row.length;
-                let nama = '', kec = '', jenis = '';
+            filteredRows = allRows.filter(r => {
+                const len = r.length;
+                let npsn = '', nama = '', kec = '', judul = '', kategori = '';
 
-                if (len <= 5) { // Legacy
-                    nama = row[2]; kec = row[3]; jenis = row[4];
-                } else {
-                    // Modern: End-Aligned Text
-                    jenis = row[len - 1];
-                    kec = row[len - 2];
-                    nama = row[len - 3];
+                // Normalize for safety
+                if (len >= 8) {
+                    npsn = r[3]; nama = r[4]; kec = r[5]; judul = r[6]; kategori = r[7];
+                } else if (len >= 7) {
+                    npsn = r[3]; nama = r[4]; kec = r[5]; judul = r[6];
+                } else if (len >= 6) {
+                    nama = r[3]; kec = r[4]; judul = r[5];
                 }
 
-                const matchesKeyword = (nama || '').toString().toLowerCase().includes(keyword) ||
-                    (kec || '').toString().toLowerCase().includes(keyword) ||
-                    (jenis || '').toString().toLowerCase().includes(keyword);
+                const matchesSearch = (npsn || '').toString().toLowerCase().includes(searchTerm) ||
+                    (nama || '').toString().toLowerCase().includes(searchTerm) ||
+                    (judul || '').toString().toLowerCase().includes(searchTerm);
 
-                const matchesKecamatan = filterKec === "" || (kec || '').trim() === filterKec;
+                const matchesKec = filterKec === "" || (kec || '').toString() === filterKec;
 
-                return matchesKeyword && matchesKecamatan;
+                // Flexible match for comma-separated categories
+                const matchesJb = filterJb === "" || (kategori || '').toString().toLowerCase().includes(filterJb.toLowerCase());
+
+                return matchesSearch && matchesKec && matchesJb;
             });
 
             currentPage = 1;
@@ -667,7 +821,7 @@
             tbody.innerHTML = '';
 
             if (filteredRows.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="px-5 py-4 text-center">Tidak ada data ditemukan.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="px-5 py-4 text-center">Tidak ada data ditemukan.</td></tr>';
                 updatePagination(0, 0);
                 return;
             }
@@ -677,32 +831,26 @@
             const normalizedRows = filteredRows.map(r => {
                 const len = r.length;
                 let id = r[0];
-                let tglP = '', tglD = '', npsn = '', nama = '', kec = '', judul = '';
+                let tglP = '', tglD = '', npsn = '', nama = '', kec = '', judul = '', kategori = '';
 
-                // Expected: [ID, TGLP, TGLD, NPSN, NAMA, KEC, JUDUL] (7 items)
-                if (len >= 7) {
-                    tglP = r[1];
-                    tglD = r[2];
-                    npsn = r[3];
-                    nama = r[4];
-                    kec = r[5];
-                    judul = r[6];
+                // Expected: [ID, TGLP, TGLD, NPSN, NAMA, KEC, JUDUL, KATEGORI] (8 items)
+                if (len >= 8) {
+                    tglP = r[1]; tglD = r[2]; npsn = r[3]; nama = r[4]; kec = r[5]; judul = r[6]; kategori = r[7];
+                } else if (len >= 7) {
+                    // Pre-migration structure: [ID, TGLP, TGLD, NPSN, NAMA, KEC, JUDUL]
+                    // We treat missing KATEGORI as empty
+                    tglP = r[1]; tglD = r[2]; npsn = r[3]; nama = r[4]; kec = r[5]; judul = r[6];
                 } else if (len >= 6) {
-                    // Maybe old structure [ID, TGLP, TGLD, NAMA, KEC, JUDUL]
-                    tglP = r[1];
-                    tglD = r[2];
-                    nama = r[3];
-                    kec = r[4];
-                    judul = r[5];
+                    // Legacy: [ID, TGLP, TGLD, NAMA, KEC, JUDUL]
+                    tglP = r[1]; tglD = r[2]; nama = r[3]; kec = r[4]; judul = r[5];
                 } else {
-                    // Legacy <=5
+                    // Very legacy
                     if (len > 1) tglP = r[1];
                     if (len > 2) nama = r[2];
-                    if (len > 3) kec = r[3];
-                    if (len > 4) judul = r[4];
+                    // ... best effort
                 }
 
-                return [id, tglP, tglD, npsn, nama, kec, judul];
+                return [id, tglP, tglD, npsn, nama, kec, judul, kategori];
             });
 
             // Pagination Logic
@@ -759,7 +907,12 @@
                     </td>
                     <td class="px-5 py-4 text-[#637588] dark:text-[#94a3b8] ${getHiddenClass(5)}">${dateProposalStr}</td>
                     <td class="px-5 py-4 text-[#637588] dark:text-[#94a3b8] ${getHiddenClass(6)}">${dateReceivedStr}</td>
-                    <td class="px-5 py-4 text-right ${getHiddenClass(7)}">
+                    <td class="px-5 py-4 text-[#637588] dark:text-[#94a3b8] ${getHiddenClass(7)}">
+                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400">
+                            ${r[7] || '-'}
+                        </span>
+                    </td>
+                    <td class="px-5 py-4 text-right ${getHiddenClass(8)}">
                          <div class="flex items-center justify-end gap-2">
                             <button onclick="openEditModal('${rowData}')" title="Edit" class="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-1.5 rounded-lg transition-colors">
                                 <span class="material-symbols-outlined text-[20px]">edit</span>
@@ -837,8 +990,62 @@
             }
         });
 
-        document.getElementById('searchInput').addEventListener('input', applyFilters);
-        document.getElementById('filterKecamatan').addEventListener('change', applyFilters);
+        document.getElementById('searchInput').addEventListener('input', filterDataAndRender);
+        document.getElementById('filterKecamatan').addEventListener('change', filterDataAndRender);
+        document.getElementById('filterJenisBantuan').addEventListener('change', filterDataAndRender);
+
+        // Search Filter Logic for Jenis Bantuan
+        function filterJenisBantuan(term) {
+            const container = document.getElementById('containerJenisBantuan');
+            const items = container.querySelectorAll('label'); // The wrapper
+            const infoText = document.getElementById('jbInfoText');
+
+            let visibleCount = 0;
+
+            items.forEach(wrapper => {
+                const checkbox = wrapper.querySelector('input[type="checkbox"]');
+                const text = wrapper.textContent.toLowerCase();
+                const isChecked = checkbox.checked;
+                const matches = text.includes(term.toLowerCase());
+
+                // Show if:
+                // 1. Term is present AND matches
+                // 2. OR Term is empty BUT is Checked (Keep selected visible)
+
+                if (term.length > 0) {
+                    if (matches) {
+                        wrapper.classList.remove('hidden');
+                        visibleCount++;
+                    } else {
+                        // Hide unless checked? 
+                        // No, if searching, user usually wants to find specific things. 
+                        // But maybe keeping checked items at top is better.
+                        // For now: Strictly show matches. Checked items handled separately? 
+                        // User request: "checkbox ditampilkan setelah dilakukan pencarian"
+                        wrapper.classList.add('hidden');
+                    }
+                } else {
+                    // Term Empty
+                    if (isChecked) {
+                        wrapper.classList.remove('hidden');
+                        visibleCount++;
+                    } else {
+                        wrapper.classList.add('hidden');
+                    }
+                }
+            });
+
+            // Toggle Info Text
+            if (term.length === 0 && visibleCount === 0) {
+                if (infoText) infoText.classList.remove('hidden');
+            } else {
+                if (infoText) infoText.classList.add('hidden');
+            }
+        }
+
+        document.getElementById('searchJenisBantuan').addEventListener('input', function (e) {
+            filterJenisBantuan(e.target.value);
+        });
 
         // Auto load
         document.addEventListener('DOMContentLoaded', fetchData);
@@ -949,6 +1156,13 @@
             });
         }
 
+        // --- Modal Logic Helper ---
+        function toggleModal(show) {
+            const modal = document.getElementById('modalProposal');
+            if (show) modal.classList.remove('hidden');
+            else modal.classList.add('hidden');
+        }
+
         // --- Toast Logic ---
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
@@ -970,7 +1184,7 @@
             }
 
             toast.innerHTML = `
-                <div class="p-4 flex items-start w-full">
+                    <div class="p-4 flex items-start w-full">
                     <div class="flex-shrink-0">
                       <span class="material-symbols-outlined ${iconColor} text-[24px]">${iconName}</span>
                     </div>
@@ -983,8 +1197,8 @@
                         <span class="material-symbols-outlined text-[18px]">close</span>
                       </button>
                     </div>
-                </div>
-            `;
+                </div >
+                    `;
 
             container.appendChild(toast);
 
@@ -1010,7 +1224,7 @@
             toast.className = `min-w-[320px] max-w-md w-full bg-white dark:bg-[#1a2634] shadow-2xl rounded-xl pointer-events-auto flex flex-col ring-1 ring-black ring-opacity-5 transform transition-all duration-300 translate-x-full opacity-0 overflow-hidden border-l-4 border-yellow-500`;
 
             toast.innerHTML = `
-                <div class="p-4 flex items-start w-full">
+                    <div class="p-4 flex items-start w-full">
                     <div class="flex-shrink-0">
                       <span class="material-symbols-outlined text-yellow-500 text-[24px]">warning</span>
                     </div>
@@ -1025,7 +1239,7 @@
                         </button>
                       </div>
                     </div>
-                </div>
+                </div >
             `;
 
             container.appendChild(toast);
@@ -1064,4 +1278,3 @@
 </body>
 
 </html>
-```
