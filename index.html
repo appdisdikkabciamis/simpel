@@ -57,8 +57,7 @@
     <div
         class="hidden md:flex w-1/2 bg-[#101922] relative overflow-hidden items-center justify-center text-center p-12">
         <!-- Background Image/Pattern -->
-        <div class="absolute inset-0 opacity-40"
-            style="background-image: url('login_illustration.png'); background-size: cover; background-position: center; animation: moveBackground 30s infinite alternate ease-in-out;">
+        <div class="absolute inset-0 opacity-100 bg-gradient-to-br from-blue-600 to-blue-900">
         </div>
 
         <!-- Overlay Content -->
@@ -144,6 +143,9 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.status === 'success') {
+                        // Set Session
+                        sessionStorage.setItem('is_logged_in', 'true');
+
                         // Save or Clear 'Remember Me'
                         if (rememberMe) {
                             localStorage.setItem('simpel_access_code', password);

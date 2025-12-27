@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Daftar Kerusakan - SIMPEL</title>
+    <script src="auth_check.js"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-[#111418] dark:text-white overflow-hidden h-screen flex">
+
+    <!-- Sidebar -->
+    <aside id="sidebar"
+        class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-[#1a2634] flex flex-col h-full border-r border-[#e5e7eb] dark:border-[#2a3848] shrink-0 transition-transform duration-300 -translate-x-full md:translate-x-0 md:static">
+        <div class="h-auto py-6 flex flex-row items-center justify-center gap-3 px-6 shrink-0 relative">
+            <div class="size-10 rounded-full bg-primary flex items-center justify-center text-white shrink-0 shadow-md">
+                <span class="text-xl font-bold font-display">S</span>
+            </div>
+            <h1 class="text-2xl font-bold tracking-tight text-[#111418] dark:text-white">SIMPEL</h1>
+            <button onclick="document.getElementById('sidebar').classList.add('-translate-x-full')"
+                class="absolute right-4 top-4 md:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <nav class="flex-1 overflow-y-auto px-4 py-2 flex flex-col gap-2">
+            <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-[#637588] dark:text-[#94a3b8] hover:bg-[#f0f2f4] dark:hover:bg-[#2a3848] transition-colors group"
+                href="dashboard.html">
+                <span class="material-symbols-outlined group-hover:text-primary transition-colors">dashboard</span>
+                <span class="text-sm font-medium">Beranda</span>
+            </a>
+
+            <!-- Dropdown Menu Proposal -->
+            <div class="space-y-1">
+                <button
+                    onclick="document.getElementById('menuProposal').classList.toggle('hidden'); document.getElementById('arrowProposal').classList.toggle('rotate-180')"
+                    class="w-full flex items-center justify-between px-3 py-3 rounded-lg text-[#637588] dark:text-[#94a3b8] hover:bg-[#f0f2f4] dark:hover:bg-[#2a3848] transition-colors group">
+                    <div class="flex items-center gap-3">
+                        <span
+                            class="material-symbols-outlined group-hover:text-primary transition-colors">folder_shared</span>
+                        <span class="text-sm font-medium">Proposal</span>
+                    </div>
+                    <span id="arrowProposal"
+                        class="material-symbols-outlined text-lg transition-transform duration-200">expand_more</span>
+                </button>
+                <div id="menuProposal" class="hidden pl-11 pr-3 space-y-1">
+                    <a class="block px-3 py-2 rounded-lg text-sm text-[#637588] dark:text-[#94a3b8] hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                        href="daftar_proposal.html">Daftar Proposal</a>
+                    <a class="block px-3 py-2 rounded-lg text-sm text-[#637588] dark:text-[#94a3b8] hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                        href="status_bantuan.html">Status Bantuan</a>
+                    <a class="block px-3 py-2 rounded-lg text-sm text-[#637588] dark:text-[#94a3b8] hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                        href="statistik_proposal.html">Statistik</a>
+                </div>
+            </div>
+
+            <!-- Dropdown Menu Laporan -->
+            <div class="space-y-1">
+                <button
+                    onclick="document.getElementById('menuLaporan').classList.toggle('hidden'); document.getElementById('arrowLaporan').classList.toggle('rotate-180')"
+                    class="w-full flex items-center justify-between px-3 py-3 rounded-lg text-[#637588] dark:text-[#94a3b8] hover:bg-[#f0f2f4] dark:hover:bg-[#2a3848] transition-colors group">
+                    <div class="flex items-center gap-3">
+                        <span
+                            class="material-symbols-outlined group-hover:text-primary transition-colors">analytics</span>
+                        <span class="text-sm font-medium">Laporan</span>
+                    </div>
+                    <span id="arrowLaporan"
+                        class="material-symbols-outlined text-lg transition-transform duration-200 rotate-180">expand_more</span>
+                </button>
+                <div id="menuLaporan" class="pl-11 pr-3 space-y-1">
+                    <a class="block px-3 py-2 rounded-lg text-sm bg-primary text-white shadow-sm transition-colors"
+                        href="kerusakan.html">Kerusakan</a>
+                    <a class="block px-3 py-2 rounded-lg text-sm text-[#637588] dark:text-[#94a3b8] hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                        href="#">Kehilangan</a>
+                </div>
+            </div>
+
+            <!-- Menu Bantuan -->
+            <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-[#637588] dark:text-[#94a3b8] hover:bg-[#f0f2f4] dark:hover:bg-[#2a3848] transition-colors group"
+                href="bantuan.html">
+                <span
+                    class="material-symbols-outlined group-hover:text-primary transition-colors">volunteer_activism</span>
+                <span class="text-sm font-medium">Bantuan</span>
+            </a>
+
+            <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors group"
+                href="#" onclick="confirmLogout(event)">
+                <span class="material-symbols-outlined">logout</span>
+                <span class="text-sm font-medium">Keluar</span>
+            </a>
+        </nav>
+
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+        <header
+            class="h-16 bg-white dark:bg-[#1a2634] border-b border-[#e5e7eb] dark:border-[#2a3848] flex items-center justify-between px-6 shrink-0 z-10">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()"
+                    class="p-1 -ml-2 text-[#637588] hover:bg-gray-100 rounded-lg dark:text-[#94a3b8] dark:hover:bg-[#2a3848] transition-colors">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-sm font-semibold text-[#111418] dark:text-white">Administrator</span>
+                <div class="size-8 rounded-full bg-blue-100 flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined text-[20px]">person</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-auto px-4 md:px-8 pb-24 scroll-smooth relative">
+            <!-- Sub-Header -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mt-4 md:mt-8 mb-6 shrink-0">
+                <h2 class="text-2xl font-bold text-[#111418] dark:text-white">Daftar Kerusakan</h2>
+                <div class="flex gap-3 w-full md:w-auto">
+                    <button onclick="exportExcel()"
+                        class="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all shadow-md active:scale-95 w-full md:w-auto justify-center">
+                        <span class="material-symbols-outlined text-[18px]">table_view</span>
+                        Excel
+                    </button>
+                    <button onclick="exportPDF()"
+                        class="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all shadow-md active:scale-95 w-full md:w-auto justify-center">
+                        <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
+                        PDF
+                    </button>
+                </div>
+            </div>
+
+            <div
+                class="bg-white dark:bg-[#1a2634] rounded-xl border border-[#e5e7eb] dark:border-[#2a3848] shadow-sm flex flex-col mb-4 md:mb-8">
+
+
+
+                <!-- Table Controls -->
+                <div
+                    class="p-4 border-b border-[#e5e7eb] dark:border-[#2a3848] flex flex-col md:flex-row items-center justify-between gap-4 shrink-0">
+                    <div
+                        class="flex items-center gap-2 text-sm text-[#637588] dark:text-[#94a3b8] w-full md:w-auto justify-center md:justify-start">
+                        <span>Tampilkan</span>
+                        <select id="entriesSelect"
+                            class="border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded-lg text-sm focus:ring-primary focus:border-primary">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                            <option value="-1">Semua</option>
+                        </select>
+                        <span>entri</span>
+                    </div>
+
+                    <div class="flex items-center gap-2 w-full md:w-auto">
+                        <!-- Filter Kecamatan -->
+                        <select id="filterKecamatan"
+                            class="border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded-lg text-sm focus:ring-primary focus:border-primary transition-all shadow-sm">
+                            <option value="">Semua Kecamatan</option>
+                        </select>
+
+                        <!-- Column Visibility Dropdown -->
+                        <div class="relative group">
+                            <button onclick="document.getElementById('colMenu').classList.toggle('hidden')"
+                                class="flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-[#637588] dark:text-[#94a3b8] px-3 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm h-[38px] min-w-[100px]">
+                                <span class="material-symbols-outlined text-[20px]">view_column</span>
+                                <span>Kolom</span>
+                            </button>
+                            <div id="colMenu"
+                                class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-[#1a2634] rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-2 z-50">
+                                <label
+                                    class="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg cursor-pointer">
+                                    <input type="checkbox" checked onchange="toggleColumn('tglSurat')"
+                                        class="rounded border-gray-300 text-primary focus:ring-primary">
+                                    <span class="text-sm font-medium">Tgl Surat</span>
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg cursor-pointer">
+                                    <input type="checkbox" onchange="toggleColumn('tglDiterima')"
+                                        class="rounded border-gray-300 text-primary focus:ring-primary">
+                                    <span class="text-sm font-medium">Tgl Diterima</span>
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg cursor-pointer">
+                                    <input type="checkbox" checked onchange="toggleColumn('tglKejadian')"
+                                        class="rounded border-gray-300 text-primary focus:ring-primary">
+                                    <span class="text-sm font-medium">Tgl Kejadian</span>
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg cursor-pointer">
+                                    <input type="checkbox" checked onchange="toggleColumn('npsn')"
+                                        class="rounded border-gray-300 text-primary focus:ring-primary">
+                                    <span class="text-sm font-medium">NPSN</span>
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg cursor-pointer">
+                                    <input type="checkbox" checked onchange="toggleColumn('nama')"
+                                        class="rounded border-gray-300 text-primary focus:ring-primary">
+                                    <span class="text-sm font-medium">Nama Sekolah</span>
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg cursor-pointer">
+                                    <input type="checkbox" checked onchange="toggleColumn('kecamatan')"
+                                        class="rounded border-gray-300 text-primary focus:ring-primary">
+                                    <span class="text-sm font-medium">Kecamatan</span>
+                                </label>
+                                <label
+                                    class="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg cursor-pointer">
+                                    <input type="checkbox" checked onchange="toggleColumn('dampak')"
+                                        class="rounded border-gray-300 text-primary focus:ring-primary">
+                                    <span class="text-sm font-medium">Dampak</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Search Input -->
+                        <div class="relative flex-1">
+                            <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-[20px]">search</span>
+                            <input type="text" id="searchInput" placeholder="Cari..."
+                                class="pl-10 pr-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm focus:ring-primary focus:border-primary transition-all w-full">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table Wrapper -->
+                <div
+                    class="overflow-x-auto md:overflow-visible rounded-lg border border-[#e5e7eb] dark:border-[#2a3848]">
+                    <table class="w-full text-left text-sm relative border-collapse" id="kerusakanTable">
+                        <thead
+                            class="sticky top-0 z-10 bg-[#f8fafc] dark:bg-[#0f172a] text-[#637588] dark:text-[#94a3b8] shadow-sm outline outline-1 outline-[#e5e7eb] dark:outline-[#2a3848]">
+                            <tr>
+                                <th class="px-5 py-3 font-medium cursor-pointer select-none" onclick="sortTable('no')">
+                                    No</th>
+                                <th class="px-5 py-3 font-medium cursor-pointer select-none col-tglSurat w-[100px] whitespace-normal"
+                                    onclick="sortTable('tglSurat')">Tgl Surat</th>
+                                <th class="px-5 py-3 font-medium cursor-pointer select-none hidden col-tglDiterima w-[100px] whitespace-normal"
+                                    onclick="sortTable('tglDiterima')">Tgl Diterima</th>
+                                <th class="px-5 py-3 font-medium cursor-pointer select-none col-tglKejadian w-[100px] whitespace-normal"
+                                    onclick="sortTable('tglKejadian')">Tgl Kejadian</th>
+                                <th class="px-5 py-3 font-medium cursor-pointer select-none col-npsn"
+                                    onclick="sortTable('npsn')">NPSN</th>
+                                <th class="px-5 py-3 font-medium cursor-pointer select-none col-nama"
+                                    onclick="sortTable('nama')">Nama Sekolah</th>
+                                <th class="px-5 py-3 font-medium cursor-pointer select-none col-kecamatan"
+                                    onclick="sortTable('kecamatan')">Kecamatan</th>
+                                <th class="px-5 py-3 font-medium cursor-pointer select-none col-dampak min-w-[200px]"
+                                    onclick="sortTable('dampak')">Dampak Kerusakan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody" class="divide-y divide-[#e5e7eb] dark:divide-[#2a3848]">
+                            <tr>
+                                <td colspan="8" class="px-5 py-4 text-center">Memuat data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div
+                    class="p-4 border-t border-[#e5e7eb] dark:border-[#2a3848] flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div class="text-sm text-[#637588] dark:text-[#94a3b8] text-center md:text-left" id="tableInfo">
+                        Menampilkan 0 sampai 0 dari 0 entri
+                    </div>
+                    <div class="flex gap-2 w-full md:w-auto justify-center">
+                        <button id="btnPrev" disabled
+                            class="px-4 py-2 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:bg-gray-100 text-sm font-medium text-gray-700 transition-all shadow-sm">Sebelumnya</button>
+                        <button id="btnNext" disabled
+                            class="px-4 py-2 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:bg-gray-100 text-sm font-medium text-gray-700 transition-all shadow-sm">Selanjutnya</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-5 right-5 z-[100] flex flex-col gap-3 pointer-events-none"></div>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbzxvd3NXMiJOT9TYoyGB8lvHIY4h64ABVGVvL-lAq_zegrZ3-vry4YLplYjDUSIf9SiDQ/exec";
+        let allRows = [];
+        let filteredRows = [];
+        let currentPage = 1;
+        let rowsPerPage = 10;
+        let currentSort = { col: 'no', dir: 'asc' };
+        let hiddenColumns = ['tglDiterima']; // Default hidden
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (window.innerWidth >= 768) {
+                sidebar.classList.toggle('hidden');
+            } else {
+                sidebar.classList.toggle('-translate-x-full');
+            }
+        }
+
+        async function fetchData() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '<tr><td colspan="8" class="px-5 py-4 text-center">Sedang mengambil data terbaru...</td></tr>';
+
+            try {
+                const res = await fetch(API_URL + "?action=get_data_kerusakan").then(r => r.json());
+
+                if (res.status === 'success') {
+                    allRows = res.data || [];
+                    populateKecamatanFilter();
+                    filterDataAndRender();
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="8" class="px-5 py-4 text-center text-red-500">${res.message || "Gagal memuat data"}</td></tr>`;
+                }
+            } catch (error) {
+                console.error(error);
+                tbody.innerHTML = `<tr><td colspan="8" class="px-5 py-4 text-center text-red-500">Gagal koneksi server</td></tr>`;
+            }
+        }
+
+        function populateKecamatanFilter() {
+            const filterSelect = document.getElementById('filterKecamatan');
+            const uniqueKec = [...new Set(allRows.map(r => r.kecamatan).filter(k => k && k.trim() !== ""))].sort();
+
+            filterSelect.innerHTML = '<option value="">Semua Kecamatan</option>';
+            uniqueKec.forEach(k => {
+                const opt = document.createElement('option');
+                opt.value = k;
+                opt.textContent = k;
+                filterSelect.appendChild(opt);
+            });
+        }
+
+        function filterDataAndRender() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const filterKec = document.getElementById('filterKecamatan').value;
+
+            filteredRows = allRows.filter(row => {
+                const matchSearch = Object.values(row).some(val => String(val).toLowerCase().includes(search));
+                const matchKec = filterKec === "" || row.kecamatan === filterKec;
+                return matchSearch && matchKec;
+            });
+
+            // Sorting
+            if (currentSort.col !== 'no') {
+                filteredRows.sort((a, b) => {
+                    let va = a[mapSortKey(currentSort.col)];
+                    let vb = b[mapSortKey(currentSort.col)];
+
+                    // Helper for date string simple comparison if format matches or string compare
+                    if (currentSort.dir === 'asc') return va > vb ? 1 : -1;
+                    else return va < vb ? 1 : -1;
+                });
+            }
+
+            // Reset Page
+            currentPage = 1;
+            renderTable();
+        }
+
+        function mapSortKey(col) {
+            if (col === 'tglSurat') return 'tglSurat';
+            if (col === 'tglDiterima') return 'tglDiterima';
+            if (col === 'tglKejadian') return 'tglKejadian';
+            if (col === 'npsn') return 'npsn';
+            if (col === 'nama') return 'namaSekolah';
+            if (col === 'kecamatan') return 'kecamatan';
+            if (col === 'dampak') return 'dampakKerusakan';
+            return 'npsn';
+        }
+
+        function sortTable(col) {
+            if (currentSort.col === col) {
+                currentSort.dir = currentSort.dir === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.col = col;
+                currentSort.dir = 'asc';
+            }
+            filterDataAndRender();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            const total = filteredRows.length;
+            if (total === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="px-5 py-4 text-center">Tidak ada data ditemukan</td></tr>';
+                updatePagination(0, 0, 0);
+                return;
+            }
+
+            // Parse Entries
+            const entriesVal = document.getElementById('entriesSelect').value;
+            rowsPerPage = parseInt(entriesVal);
+            if (rowsPerPage === -1) rowsPerPage = total;
+
+            const totalPages = Math.ceil(total / rowsPerPage);
+            if (currentPage > totalPages) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
+
+            const startIdx = (currentPage - 1) * rowsPerPage;
+            const endIdx = startIdx + rowsPerPage;
+            const pageData = filteredRows.slice(startIdx, endIdx);
+
+            pageData.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-[#f8fafc] dark:hover:bg-[#1e293b] transition-colors border-b border-[#e5e7eb] dark:border-[#2a3848]";
+
+                tr.innerHTML = `
+                    <td class="px-5 py-4 font-medium">${startIdx + index + 1}</td>
+                    <td class="px-5 py-4 whitespace-normal col-tglSurat ${isHidden('tglSurat')}">${formatDate(row.tglSurat)}</td>
+                    <td class="px-5 py-4 whitespace-normal col-tglDiterima ${isHidden('tglDiterima')}">${formatDate(row.tglDiterima)}</td>
+                    <td class="px-5 py-4 whitespace-normal col-tglKejadian ${isHidden('tglKejadian')}">${formatDate(row.tglKejadian)}</td>
+                    <td class="px-5 py-4 font-medium col-npsn ${isHidden('npsn')}">${row.npsn || '-'}</td>
+                    <td class="px-5 py-4 col-nama ${isHidden('nama')}">${row.namaSekolah || '-'}</td>
+                    <td class="px-5 py-4 col-kecamatan ${isHidden('kecamatan')}">${row.kecamatan || '-'}</td>
+                    <td class="px-5 py-4 col-dampak ${isHidden('dampak')}">${row.dampakKerusakan || '-'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            updatePagination(startIdx + 1, Math.min(endIdx, total), total);
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return dateString; // Fallback to raw string if parse fail
+            return new Intl.DateTimeFormat('id-ID', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            }).format(date);
+        }
+
+        function updatePagination(start, end, total) {
+            document.getElementById('tableInfo').textContent = `Menampilkan ${start} sampai ${end} dari ${total} entri`;
+            document.getElementById('btnPrev').disabled = currentPage === 1;
+            document.getElementById('btnNext').disabled = currentPage >= Math.ceil(total / rowsPerPage);
+        }
+
+        // Event Listeners
+        document.getElementById('searchInput').addEventListener('input', () => filterDataAndRender());
+        document.getElementById('filterKecamatan').addEventListener('change', () => filterDataAndRender());
+        document.getElementById('entriesSelect').addEventListener('change', () => { currentPage = 1; renderTable(); });
+        document.getElementById('btnPrev').addEventListener('click', () => { if (currentPage > 1) { currentPage--; renderTable(); } });
+        document.getElementById('btnNext').addEventListener('click', () => {
+            const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+            if (currentPage < totalPages) { currentPage++; renderTable(); }
+        });
+
+        // Initial Load
+        document.addEventListener('DOMContentLoaded', fetchData);
+
+        // Toast Confirm for Logout
+        function showConfirmToast(message, onConfirm, yesLabel = 'KELUAR', yesClass = 'bg-red-600 hover:bg-red-700') {
+            const container = document.getElementById('toast-container');
+            if (!container) {
+                if (confirm(message)) onConfirm();
+                return;
+            }
+
+            const toast = document.createElement('div');
+            toast.className = `min-w-[320px] max-w-md w-full bg-white dark:bg-[#1a2634] shadow-2xl rounded-xl pointer-events-auto flex flex-col ring-1 ring-black ring-opacity-5 transform transition-all duration-300 translate-x-full opacity-0 overflow-hidden border-l-4 border-yellow-500`;
+
+            toast.innerHTML = `
+                <div class="p-4 flex items-start w-full">
+                    <div class="flex-shrink-0">
+                      <span class="material-symbols-outlined text-yellow-500 text-[24px]">warning</span>
+                    </div>
+                    <div class="ml-3 w-0 flex-1 pt-0.5">
+                      <p class="text-sm font-semibold text-gray-900 dark:text-white leading-relaxed">${message}</p>
+                      <div class="mt-3 flex gap-3">
+                        <button id="btn-confirm-yes" class="${yesClass} text-white text-xs font-bold py-2 px-4 rounded shadow-sm transition-colors">
+                            ${yesLabel}
+                        </button>
+                        <button id="btn-confirm-no" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs font-bold py-2 px-4 rounded shadow-sm transition-colors">
+                            BATAL
+                        </button>
+                      </div>
+                    </div>
+                </div>
+            `;
+
+            container.appendChild(toast);
+
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-x-full', 'opacity-0');
+            });
+
+            const btnYes = toast.querySelector('#btn-confirm-yes');
+            const btnNo = toast.querySelector('#btn-confirm-no');
+
+            btnYes.onclick = () => {
+                onConfirm();
+                removeToast(toast);
+            };
+
+            btnNo.onclick = () => {
+                removeToast(toast);
+            };
+
+            setTimeout(() => {
+                if (toast.parentElement) removeToast(toast);
+            }, 10000);
+        }
+
+        function removeToast(toast) {
+            toast.classList.add('translate-x-full', 'opacity-0');
+            setTimeout(() => {
+                if (toast.parentElement) toast.remove();
+            }, 300);
+        }
+
+        function confirmLogout(e) {
+            e.preventDefault();
+            showConfirmToast("Apakah Anda yakin ingin keluar?", () => {
+                logout();
+            }, 'KELUAR');
+        }
+
+        // Feature Functions
+        function isHidden(col) {
+            return hiddenColumns.includes(col) ? 'hidden' : '';
+        }
+
+        function toggleColumn(col) {
+            if (hiddenColumns.includes(col)) {
+                hiddenColumns = hiddenColumns.filter(c => c !== col);
+            } else {
+                hiddenColumns.push(col);
+            }
+
+            // Toggle Header
+            const header = document.querySelector(`.col-${col}`);
+            if (header) {
+                if (hiddenColumns.includes(col)) header.classList.add('hidden');
+                else header.classList.remove('hidden');
+            }
+
+            // Re-render to update rows
+            renderTable();
+        }
+
+        function exportExcel() {
+            // Map visible columns only? Or all? Usually export visible.
+            // Let's filter data based on visible cols
+            const dataToExport = filteredRows.map((r, i) => {
+                let row = { "No": i + 1 };
+                if (!hiddenColumns.includes('tglSurat')) row["Tgl Surat"] = formatDate(r.tglSurat);
+                if (!hiddenColumns.includes('tglDiterima')) row["Tgl Diterima"] = formatDate(r.tglDiterima);
+                if (!hiddenColumns.includes('tglKejadian')) row["Tgl Kejadian"] = formatDate(r.tglKejadian);
+                if (!hiddenColumns.includes('npsn')) row["NPSN"] = r.npsn;
+                if (!hiddenColumns.includes('nama')) row["Nama Sekolah"] = r.namaSekolah;
+                if (!hiddenColumns.includes('kecamatan')) row["Kecamatan"] = r.kecamatan;
+                if (!hiddenColumns.includes('dampak')) row["Dampak"] = r.dampakKerusakan;
+                return row;
+            });
+
+            const ws = XLSX.utils.json_to_sheet(dataToExport);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Kerusakan");
+            XLSX.writeFile(wb, "Data-Kerusakan-SIMPEL.xlsx");
+        }
+
+        function exportPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('l', 'mm', 'a4');
+
+            let head = ['No'];
+            if (!hiddenColumns.includes('tglSurat')) head.push('Tgl Surat');
+            if (!hiddenColumns.includes('tglDiterima')) head.push('Tgl Diterima');
+            if (!hiddenColumns.includes('tglKejadian')) head.push('Tgl Kejadian');
+            if (!hiddenColumns.includes('npsn')) head.push('NPSN');
+            if (!hiddenColumns.includes('nama')) head.push('Nama Sekolah');
+            if (!hiddenColumns.includes('kecamatan')) head.push('Kecamatan');
+            if (!hiddenColumns.includes('dampak')) head.push('Dampak');
+
+            const body = filteredRows.map((r, i) => {
+                let row = [i + 1];
+                if (!hiddenColumns.includes('tglSurat')) row.push(formatDate(r.tglSurat));
+                if (!hiddenColumns.includes('tglDiterima')) row.push(formatDate(r.tglDiterima));
+                if (!hiddenColumns.includes('tglKejadian')) row.push(formatDate(r.tglKejadian));
+                if (!hiddenColumns.includes('npsn')) row.push(r.npsn);
+                if (!hiddenColumns.includes('nama')) row.push(r.namaSekolah);
+                if (!hiddenColumns.includes('kecamatan')) row.push(r.kecamatan);
+                if (!hiddenColumns.includes('dampak')) row.push(r.dampakKerusakan);
+                return row;
+            });
+
+            doc.autoTable({
+                head: [head],
+                body: body,
+                theme: 'grid',
+                styles: { fontSize: 8 },
+                headStyles: { fillColor: [19, 127, 236] }
+            });
+            doc.save("Data-Kerusakan-SIMPEL.pdf");
+        }
+
+        // Close menus when clicking outside
+        document.addEventListener('click', function (e) {
+            const menu = document.getElementById('colMenu');
+            const btn = e.target.closest('button');
+            if (!menu.contains(e.target) && (!btn || !btn.getAttribute('onclick')?.includes('colMenu'))) {
+                menu.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+
+</html>

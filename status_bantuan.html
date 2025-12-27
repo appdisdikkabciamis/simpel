@@ -5,6 +5,7 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Status Bantuan - SIMPEL</title>
+    <script src="auth_check.js"></script>
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap"
@@ -100,11 +101,19 @@
                 </button>
                 <div id="menuLaporan" class="hidden pl-11 pr-3 space-y-1">
                     <a class="block px-3 py-2 rounded-lg text-sm text-[#637588] dark:text-[#94a3b8] hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
-                        href="#">Kerusakan</a>
+                        href="kerusakan.html">Kerusakan</a>
                     <a class="block px-3 py-2 rounded-lg text-sm text-[#637588] dark:text-[#94a3b8] hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
                         href="#">Kehilangan</a>
                 </div>
             </div>
+
+            <!-- Menu Bantuan -->
+            <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-[#637588] dark:text-[#94a3b8] hover:bg-[#f0f2f4] dark:hover:bg-[#2a3848] transition-colors group"
+                href="bantuan.html">
+                <span
+                    class="material-symbols-outlined group-hover:text-primary transition-colors">volunteer_activism</span>
+                <span class="text-sm font-medium">Bantuan</span>
+            </a>
 
             <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors group"
                 href="#" onclick="confirmLogout(event)">
@@ -929,9 +938,9 @@
         });
 
         function confirmLogout(event) {
-            event.preventDefault(); // Prevent default link behavior
+            event.preventDefault();
             showConfirmToast("Apakah Anda yakin ingin keluar?", () => {
-                window.location.href = "Index.html"; // Or your logout page
+                logout();
             }, 'KELUAR');
         }
 

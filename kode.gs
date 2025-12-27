@@ -237,39 +237,46 @@ function handleRequest(e) {
       var header = values[0];
       
       // Dynamic Column Finding
-      // Need: Sumber Dana, NPSN, Nama, Kecamatan, Kegiatan
-      // Mapping:
-      // Sumber Dana - check 'Sumber Dana', 'Dana'
-      // NPSN - 'NPSN'
-      // Kegiatan - 'Kegiatan'
-      
-      var colSumber = -1, colNpsn = -1, colKegiatan = -1;
+      // Need: Sumber Dana, NPSN, Nama Sekolah, Kecamatan, Kegiatan
+      var colSumber = -1, colNpsn = -1, colNama = -1, colKec = -1, colKegiatan = -1;
       
       for(var i=0; i<header.length; i++) {
         var h = String(header[i]).toLowerCase();
         if (h.includes('sumber') && h.includes('dana')) colSumber = i;
         else if (h === 'npsn') colNpsn = i;
+        else if (h.includes('nama') && h.includes('sekolah')) colNama = i;
+        else if (h === 'kecamatan') colKec = i;
         else if (h === 'kegiatan') colKegiatan = i;
       }
       
-      // Fallbacks
-      if (colSumber === -1) colSumber = 0; // Assume first? Or specific index if fixed structure known
-      // User said: [Sumber Dana, NPSN, Nama Sekolah, Kecamatan, Kegiatan]
-      // Indices:        0         1          2             3         4
+      // Secondary check if specific names failed
+      if (colNama === -1) {
+         for(var i=0; i<header.length; i++) { if(String(header[i]).toLowerCase().includes('nama')) { colNama = i; break; } }
+      }
+      
+      // Fallbacks (indices based on request order if header detection fails: Sumber Dana, NPSN, Nama Sekolah, Kecamatan, Kegiatan)
+      if (colSumber === -1) colSumber = 0;
       if (colNpsn === -1) colNpsn = 1;
+      if (colNama === -1) colNama = 2;
+      if (colKec === -1) colKec = 3;
+      if (colKegiatan === -1) colKegiatan = 4;
       
       var result = [];
       for(var i=1; i<values.length; i++) {
-        // Return object or array? Array is lighter.
-        // [NPSN, Sumber Dana, Kegiatan]
         var npsn = values[i][colNpsn];
         var sumber = (colSumber !== -1) ? values[i][colSumber] : "";
+        var nama = (colNama !== -1) ? values[i][colNama] : "";
+        var kec = (colKec !== -1) ? values[i][colKec] : "";
         var kegiatan = (colKegiatan !== -1) ? values[i][colKegiatan] : "";
         
-        if (npsn) {
+        // Push even if empty? Usually yes for a list. Or filter by NPSN? 
+        // Let's include everything that has at least some content
+        if (npsn || nama) {
            result.push({
-             npsn: String(npsn).trim(),
              sumberDana: sumber,
+             npsn: String(npsn).trim(),
+             namaSekolah: nama,
+             kecamatan: kec,
              kegiatan: kegiatan
            });
         }
@@ -277,30 +284,82 @@ function handleRequest(e) {
       
       return responseJSON({ status: 'success', data: result });
 
-    } else {
-      // Default: Ambil Data
+    } else if (action == "get_data_kerusakan") {
       var ss = SpreadsheetApp.getActiveSpreadsheet();
-      var sheet = ss.getSheetByName('Proposal');
-      // Use getDisplayValues to avoid Date Object issues and get exact text
-      var data = sheet.getDataRange().getDisplayValues();
+      var sheet = ss.getSheetByName('Kerusakan');
       
-      // Hapus header
-      data.shift(); 
+      if (!sheet) {
+        return responseJSON({ status: 'failed', message: 'Sheet Kerusakan tidak ditemukan' });
+      }
       
-      // Inject Row Index as ID at position 0
-      // Original: [TGLP, TGLD, NAMA, KEC, JUDUL]
-      // New: [ROW_INDEX, TGLP, TGLD, NAMA, KEC, JUDUL]
-      var resultWithId = data.map(function(row, index) {
-         // spreadsheet row index starts at 1, header is 1, data starts at 2.
-         // data array index 0 corresponds to spreadsheet row 2.
-         // Let's pass "spreadsheet row index" + 1 or just index?
-         // We need unique ID. Let's use (index + 2) which is the actual Sheet Row Number.
-         // Or simply index works for array logic, but for Update we need row number.
-         var sheetRow = index + 2; 
-         return [sheetRow].concat(row);
-      });
+      var values = sheet.getDataRange().getDisplayValues();
+      if (values.length < 2) return responseJSON({ status: 'success', data: [] });
       
-      return responseJSON({ status: 'success', data: resultWithId });
+      var header = values[0];
+      
+      // Columns: TGL SURAT, TGL DITERIMA, TGL KEJADIAN, NPSN, NAMA SEKOLAH, KECAMATAN, DAMPAK KERUSAKAN
+      var colSurat = -1, colTerima = -1, colKejadian = -1;
+      var colNpsn = -1, colNama = -1, colKec = -1, colDampak = -1;
+      
+      for(var i=0; i<header.length; i++) {
+        var h = String(header[i]).toLowerCase();
+        if (h.includes('tgl') && h.includes('surat')) colSurat = i;
+        else if (h.includes('tgl') && h.includes('diterima')) colTerima = i;
+        else if (h.includes('tgl') && h.includes('kejadian')) colKejadian = i;
+        else if (h === 'npsn') colNpsn = i;
+        else if (h.includes('nama') && h.includes('sekolah')) colNama = i;
+        else if (h === 'kecamatan') colKec = i;
+        else if (h.includes('dampak') && h.includes('kerusakan')) colDampak = i;
+      }
+      
+      // Fallback Search for Nama
+      if (colNama === -1) {
+         for(var i=0; i<header.length; i++) { if(String(header[i]).toLowerCase().includes('nama')) { colNama = i; break; } }
+      }
+      
+      var result = [];
+      for(var i=1; i<values.length; i++) {
+        var npsn = (colNpsn !== -1) ? values[i][colNpsn] : "";
+        var nama = (colNama !== -1) ? values[i][colNama] : "";
+        
+        if (npsn || nama) {
+           result.push({
+             tglSurat: (colSurat !== -1) ? values[i][colSurat] : "",
+             tglDiterima: (colTerima !== -1) ? values[i][colTerima] : "",
+             tglKejadian: (colKejadian !== -1) ? values[i][colKejadian] : "",
+             npsn: String(npsn).trim(),
+             namaSekolah: nama,
+             kecamatan: (colKec !== -1) ? values[i][colKec] : "",
+             dampakKerusakan: (colDampak !== -1) ? values[i][colDampak] : ""
+           });
+        }
+      }
+      
+      return responseJSON({ status: 'success', data: result });
+
+    } else if (action == "baca" || action == "read") {
+       // Default: Ambil Data (BACA)
+       var ss = SpreadsheetApp.getActiveSpreadsheet();
+       var sheet = ss.getSheetByName('Proposal');
+       var data = sheet.getDataRange().getDisplayValues();
+       
+       data.shift(); // Hapus header
+       
+       // Inject Row Index as ID at position 0
+       var resultWithId = data.map(function(row, index) {
+          var sheetRow = index + 2; 
+          return [sheetRow].concat(row);
+       });
+       
+       return responseJSON({ status: 'success', data: resultWithId });
+
+    } else {
+       // 404 Not Found Handling
+       return responseJSON({ 
+         status: 'error', 
+         message: 'Endpoint or Action not found (404)',
+         code: 404 
+       });
     }
 
   } catch (error) {
