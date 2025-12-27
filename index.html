@@ -54,17 +54,18 @@
 <body class="bg-white dark:bg-[#101922] min-h-screen flex overflow-hidden">
 
     <!-- Left Side: Illustration & Branding -->
-    <div
-        class="hidden md:flex w-1/2 bg-[#101922] relative overflow-hidden items-center justify-center text-center p-12">
-        <!-- Background Image/Pattern -->
-        <div class="absolute inset-0 opacity-100 bg-gradient-to-br from-blue-600 to-blue-900">
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <div class="hidden md:flex w-1/2 bg-[#101922] relative overflow-hidden items-center justify-center p-8">
+        <!-- Background Gradient -->
+        <div class="absolute inset-0 opacity-100 bg-gradient-to-br from-blue-600 to-blue-900 z-0">
         </div>
 
-        <!-- Overlay Content -->
-        <div class="relative z-10 max-w-lg">
 
-            <h1 class="text-4xl font-bold tracking-tight text-white mb-4">SIMPEL</h1>
-            <p class="text-lg text-blue-200">Sistem Informasi Manajemen Pengajuan dan Laporan dari Satuan Pendidikan</p>
+
+        <!-- Illustration (Centered) -->
+        <div class="relative z-10 w-full flex items-center justify-center">
+            <lottie-player src="Analytics Character Animation.json" background="transparent" speed="1"
+                style="width: 100%; height: 100%; max-width: 500px;" loop autoplay></lottie-player>
         </div>
     </div>
 
@@ -72,9 +73,12 @@
     <div class="w-full md:w-1/2 flex items-center justify-center p-8 bg-white dark:bg-[#1a2634]">
         <div class="w-full max-w-md space-y-8">
             <div class="text-center md:text-left">
-                <h2 class="text-3xl font-bold text-[#111418] dark:text-white tracking-tight">Masuk Aplikasi</h2>
-                <p class="mt-2 text-[#637588] dark:text-[#94a3b8]">Silakan masukkan kode akses Anda untuk melanjutkan.
+                <!-- Branding Text Moved Here -->
+                <h1 class="text-4xl font-bold tracking-tight text-[#111418] dark:text-white mb-2">SIMPEL</h1>
+                <p class="text-lg text-[#637588] dark:text-[#94a3b8] leading-relaxed font-normal mb-8">
+                    Sistem Informasi Manajemen Pengajuan dan Laporan dari Satuan Pendidikan
                 </p>
+
             </div>
 
             <!-- Separator (like the 'or' line in the image, but maybe just a visual break) -->
