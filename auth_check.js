@@ -19,7 +19,7 @@
  * Clears session and redirects to index.html
  */
 function logout() {
-    localStorage.removeItem('simpel_access_code'); // Optional: specific requirement? Plan said session only, but let's keep consistent locally.
+
     sessionStorage.removeItem('is_logged_in');
     window.location.href = 'index.html';
 }
