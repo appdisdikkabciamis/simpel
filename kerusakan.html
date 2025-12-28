@@ -481,62 +481,68 @@
 
         // Toast Confirm for Logout
         function showConfirmToast(message, onConfirm, yesLabel = 'KELUAR', yesClass = 'bg-red-600 hover:bg-red-700') {
-            const container = document.getElementById('toast-container');
-            if (!container) {
-                if (confirm(message)) onConfirm();
-                return;
-            }
+            // Create Modal Overlay
+            const overlay = document.createElement('div');
+            overlay.className = "fixed inset-0 z-[110] flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity duration-300 opacity-0";
 
-            const toast = document.createElement('div');
-            toast.className = `min-w-[320px] max-w-md w-full bg-white dark:bg-[#1a2634] shadow-2xl rounded-xl pointer-events-auto flex flex-col ring-1 ring-black ring-opacity-5 transform transition-all duration-300 translate-x-full opacity-0 overflow-hidden border-l-4 border-yellow-500`;
+            // Create Modal Content
+            const modal = document.createElement('div');
+            modal.className = "bg-white dark:bg-[#1a2634] rounded-2xl shadow-2xl w-full max-w-sm mx-4 p-6 transform scale-95 opacity-0 transition-all duration-300 flex flex-col items-center text-center";
 
-            toast.innerHTML = `
-                <div class="p-4 flex items-start w-full">
-                    <div class="flex-shrink-0">
-                      <span class="material-symbols-outlined text-yellow-500 text-[24px]">warning</span>
-                    </div>
-                    <div class="ml-3 w-0 flex-1 pt-0.5">
-                      <p class="text-sm font-semibold text-gray-900 dark:text-white leading-relaxed">${message}</p>
-                      <div class="mt-3 flex gap-3">
-                        <button id="btn-confirm-yes" class="${yesClass} text-white text-xs font-bold py-2 px-4 rounded shadow-sm transition-colors">
-                            ${yesLabel}
-                        </button>
-                        <button id="btn-confirm-no" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs font-bold py-2 px-4 rounded shadow-sm transition-colors">
-                            BATAL
-                        </button>
-                      </div>
-                    </div>
+            modal.innerHTML = `
+                <div class="mb-4 p-4 rounded-full bg-yellow-50 dark:bg-yellow-900/20 text-yellow-500">
+                    <span class="material-symbols-outlined text-4xl">warning</span>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Konfirmasi</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mb-6 text-center leading-relaxed">
+                    ${message}
+                </p>
+                <div class="flex gap-3 w-full">
+                    <button id="btn-confirm-no" class="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                        Batal
+                    </button>
+                    <button id="btn-confirm-yes" class="flex-1 px-4 py-2.5 rounded-xl text-white font-bold shadow-lg shadow-red-500/30 transition-all transform active:scale-95 ${yesClass}">
+                        ${yesLabel}
+                    </button>
                 </div>
             `;
 
-            container.appendChild(toast);
+            overlay.appendChild(modal);
+            document.body.appendChild(overlay);
 
+            // Animate In
             requestAnimationFrame(() => {
-                toast.classList.remove('translate-x-full', 'opacity-0');
+                overlay.classList.remove('opacity-0');
+                modal.classList.remove('scale-95', 'opacity-0');
+                modal.classList.add('scale-100', 'opacity-100');
             });
 
-            const btnYes = toast.querySelector('#btn-confirm-yes');
-            const btnNo = toast.querySelector('#btn-confirm-no');
+            // Handlers
+            const closeModal = () => {
+                overlay.classList.add('opacity-0');
+                modal.classList.remove('scale-100', 'opacity-100');
+                modal.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    if (overlay.parentElement) overlay.remove();
+                }, 300);
+            };
+
+            const btnYes = modal.querySelector('#btn-confirm-yes');
+            const btnNo = modal.querySelector('#btn-confirm-no');
 
             btnYes.onclick = () => {
                 onConfirm();
-                removeToast(toast);
+                closeModal();
             };
 
             btnNo.onclick = () => {
-                removeToast(toast);
+                closeModal();
             };
 
-            setTimeout(() => {
-                if (toast.parentElement) removeToast(toast);
-            }, 10000);
-        }
-
-        function removeToast(toast) {
-            toast.classList.add('translate-x-full', 'opacity-0');
-            setTimeout(() => {
-                if (toast.parentElement) toast.remove();
-            }, 300);
+            // Close on click outside
+            overlay.onclick = (e) => {
+                if (e.target === overlay) closeModal();
+            };
         }
 
         function confirmLogout(e) {
